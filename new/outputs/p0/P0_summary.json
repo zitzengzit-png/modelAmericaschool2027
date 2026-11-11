@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-11T13:01:15",
+  "generated_utc": "2026-11-11T13:18:22",
   "config": {
     "wsRoot": "D:\\MATHmodelAmericaschool2027\\ws",
     "oldRoot": "D:\\MATHmodelAmericaschool2027\\ws\\old",
@@ -11,6 +11,20 @@
     "outDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p0",
     "frozenSourceDir": "D:\\MATHmodelAmericaschool2027\\ws\\old\\code\\matlab",
     "dataSource": "tracker",
+    "timeUnit": "day",
+    "dayZero": "2026-06-21",
+    "fitStart": "2026-06-21",
+    "fitEnd": "2026-10-25",
+    "holdStart": "2026-10-26",
+    "holdEnd": "2026-11-09",
+    "fitWeeks": [
+      25,
+      43
+    ],
+    "holdWeeks": [
+      44,
+      45
+    ],
     "fitWindow": [
       25,
       43
@@ -28,14 +42,32 @@
       34,
       41
     ],
-    "sigma": 0.7,
+    "knotDates": [
+      "2026-07-13",
+      "2026-08-17",
+      "2026-10-11"
+    ],
+    "sigmaWeek": 0.7,
+    "gammaWeek": 0.21,
+    "muWeek": 0.235,
+    "alphaWeek": 1.244,
+    "nuWeek": 3.5,
+    "sigma": 0.099999999999999992,
+    "gamma": 0.03,
+    "gammaQ": 0.03,
+    "mu": 0.033571428571428572,
+    "muQ": 0.033571428571428572,
+    "alpha": 0.17771428571428571,
+    "nu": 0.5,
+    "kappa": 3,
     "burialDelayDays": 2,
     "tracingDelayDays": 1,
     "isolationRatio": 0.4,
     "reportFrac": 1,
     "outTag": "v2"
   },
-  "data_source": "ebola-tracker.org database, latest daily 2026-11-09 (SitRep 179)",
+  "data_source": "ebola-tracker.org daily series 2026-06-21..2026-11-09 (SitRep 179)",
+  "time_unit": "day",
   "loaded_from": {
     "weekly": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\national_weekly_20261111.csv",
     "province": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\province_latest_20261111.csv",
@@ -45,14 +77,17 @@
     "hcw": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\legacy_weekly_supplement_W29-W41.csv",
     "raw": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\ebola-drc-database-20261111.csv"
   },
-  "fit_window": [
-    25,
-    43
-  ],
-  "holdout": [
-    44,
-    45
-  ],
+  "fit_start": "2026-06-21",
+  "fit_end": "2026-10-25",
+  "hold_start": "2026-10-26",
+  "hold_end": "2026-11-09",
+  "n_days": 142,
+  "n_weekly": 21,
+  "weekly_validation": {
+    "missing_weeks": 0,
+    "max_diff_cases": 0,
+    "max_diff_deaths": 0
+  },
   "N": 3.8393224E+7,
   "n_provinces": 8,
   "n_zones": 67,
@@ -62,32 +97,31 @@
     "deaths": 5387,
     "new_cases": 52,
     "new_deaths": 33,
-    "recovered": "2990",
-    "etc_admitted": 904,
     "sitrep": 179
   },
   "initial_state": {
-    "week": 25,
-    "week_end": "2026-06-21",
-    "S": 3.8391833142857142E+7,
-    "E": 342.85714285714289,
+    "date": "2026-06-21",
+    "t_day": 0,
+    "S": 3.8392176E+7,
+    "E": 0,
     "I": 421,
     "Q": 360,
     "R": 0,
-    "D": 21.428571428571427,
+    "D": 0,
     "M": 267,
     "C": 1048,
-    "new_cases": 240,
-    "new_deaths": 75,
+    "new_cases": 0,
+    "new_deaths": 0,
     "q_source": "etc_admitted",
     "r_source": "assumed_zero",
-    "e_source": "reconstructed",
-    "d_source": "reconstructed",
-    "sigma": 0.7,
+    "e_source": "assumed_zero",
+    "d_source": "assumed_zero",
+    "sigma": 0.099999999999999992,
     "burial_delay_days": 2,
     "isolation_ratio": 0.4,
     "conservation_error": 0,
-    "case_identity_error": 0
+    "case_identity_error": 0,
+    "flags": "observed"
   },
   "response": {
     "asOf": "2026-11-11",
@@ -100,19 +134,19 @@
   },
   "checks": [
     {
-      "check": "anchor_W25",
+      "check": "anchor_2026-06-21",
       "status": "PASS",
       "detail": "1048 / 267 (expected 1048 / 267)"
     },
     {
-      "check": "anchor_W43",
+      "check": "anchor_2026-10-25",
       "status": "PASS",
       "detail": "10060 / 4887 (expected 10060 / 4887)"
     },
     {
-      "check": "anchor_W45",
+      "check": "anchor_2026-11-09",
       "status": "PASS",
-      "detail": "10990 / 5354 (expected 10990 / 5354)"
+      "detail": "11042 / 5387 (expected 11042 / 5387)"
     },
     {
       "check": "conservation",
@@ -123,6 +157,11 @@
       "check": "case_identity",
       "status": "PASS",
       "detail": "max |I+Q+R+M-C| = 0"
+    },
+    {
+      "check": "weekly_aggregation",
+      "status": "PASS",
+      "detail": "21 anchors, max diff 0/0"
     },
     {
       "check": "province_population_sum",
@@ -145,14 +184,14 @@
       "detail": "W25 1193/535, W41 9066/4381, Q0=196, I0=350"
     },
     {
-      "check": "holdout_points",
+      "check": "daily_coverage",
       "status": "PASS",
-      "detail": "W44-W45"
+      "detail": "142 days, 2026-06-21..2026-11-09"
     },
     {
-      "check": "zone_population",
+      "check": "holdout_days",
       "status": "PASS",
-      "detail": "59 / 67 zones with population"
+      "detail": "15 days"
     }
   ],
   "all_pass": true

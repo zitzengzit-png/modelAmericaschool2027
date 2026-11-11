@@ -1,6 +1,6 @@
 # 新题适配方案：从旧课程实验（SEIQRD / W41 / 7 省）到 2026 CQU MCM Problem A
 
-> 版本：v1.1（含 P0 实施记录；2026-11-11）
+> 版本：v1.2（含 P0 实施记录；2026-11-11 起全部用日）
 > 输入依据：
 > - 新题：`2026_CQU_MCM_ICM_Problems/2026_CQU_MCM_Problem_A.docx|pdf`（中文译文 `problem_statements_cn/Problem_A_Ebola_Transmission_Modeling_CN.md`）
 > - 旧题/旧报告：`ws/old/referrence/计算机学院微分方程综合实验3.docx`（正文 + 附录 Q2/Q3/Q4 代码）
@@ -172,7 +172,7 @@ nu(t)    = 7 / d_nu(t)
 | 项目 | 旧（active） | 新（应为 active） | 备注 |
 |---|---|---|---|
 | 来源 | `outbreak_data.xlsx` 工作表 2（WHO AFRO 回顾） | `ebola_tracker/national_weekly_20261111.csv`（INSP 日度汇总） | 两套序列不可混用 |
-| 窗口 | W25–W41，17 点 | 拟合 W25–W43（19 点）；W44–W45（10,532/5,126；10,990/5,354）做验证 | 与题面 10,060/4,887 对齐 |
+| 窗口 | W25–W41，17 点 | 日表 2026-06-21..11-09（142 天）；拟合 06-21..10-25（127 天），验证 10-26..11-09（15 天）；周表仅聚合校验 | 与题面 10,060/4,887 对齐 |
 | 省/区 | 7 省 / 65–66 区 | 8 省 / 66 区（W43）→ 67 区（W45） | 新增 Nord-Ubangi（11 区，9 例，人口为 150 万估计） |
 | 总人口 N | 36,893,224 | 38,393,224（含 Nord-Ubangi 估计） | R0 对 N 不敏感，人均发病率敏感 |
 | W25 锚点 | 1,193 / 535 | 1,048 / 267 | 差异来自回顾修订，必须二选一 |
@@ -730,6 +730,9 @@ end
 
 ## 10. P0 实施记录（2026-11-11，已完成）
 
+> 本节是 P0 的**周尺度初版**记录；2026-11-11 晚已切换为**日尺度**。
+> 当前标准、日表规则和 12 项验收见第 11 节；本节保留为演进记录。
+
 ### 10.1 数据
 
 - 从 ebola-tracker.org 重新抓取：`ebola-drc-database-20261111.csv`，9,228 行，最新日 2026-11-09（SitRep 179），**11,042 / 5,387**。
@@ -760,7 +763,7 @@ end
 - legacy 回归：W25 1,193/535、W41 9,066/4,381、`Q0=196, I0=350`；
 - 2,073 例锚点：W28（1,963，07-12）–W29（2,423，07-19），插值约 07-13。
 
-输出：`ws/new/outputs/p0/P0_checks.csv`、`P0_state_reconstruction.csv`、`P0_data_report.csv`、`P0_summary.json`。
+输出：`ws/new/outputs/p0/P0_checks.csv`、`P0_state_reconstruction.csv`、`P0_daily_report.csv`、`P0_summary.json`。
 
 ### 10.4 P0 发现的数据问题（Task 2 必须披露）
 
@@ -773,6 +776,98 @@ end
 ### 10.5 下一步（P1）
 
 在 `ws/new/code` 中实现三通道模型：`betaC/betaH/betaF`、`R0` 分解、`R_eff`、状态转移图；复用 `config/load_data/state_at`，不改 `ws/old/code/matlab`。
+
+---
+
+## 11. 2026-11-11 标准切换：全部用日（当前标准）
+
+### 11.1 为什么切
+
+- 新题要求连续时间模型，并要回答“7 月中旬（2,073 例）就加速干预”的时机问题；
+- 周表只有 21 个点，无法精确到日；日表有 142 天，可直接定位到 2026-07-14；
+- 原始 tracker 本身就是日度公报，日表不会额外造信息，只是把周锚点之间的变化显式化；
+- 日表可以聚合回周，仍然能与 W25–W45 的 21 个周日锚点逐位对齐，作为校验。
+
+### 11.2 日表
+
+- `national_daily_<tag>.csv`：2026-06-21 至 2026-11-09，共 142 天；
+- `province_daily_<tag>.csv`：8 省 × 142 天；
+- 字段：`date, t_day, cum_confirmed, cum_deaths, new_confirmed, new_deaths,
+  new_confirmed_7d, new_deaths_7d, recovered, etc_admitted, community_deaths,
+  etc_deaths, alerts_received, lab_samples, lab_positives, contacts_to_follow,
+  contacts_seen, vaccinated_total, sitrep, note, flag`；
+- 累计字段缺失日按 LOCF；`new_*_7d` 为 7 日滑动均值；
+- `flag` 标记 `observed / missing_day_locf / special_report / negative_revision`；
+- 周表 `national_weekly_<tag>.csv` 保留，只做聚合校验（21 个周日，0 差异）。
+
+### 11.3 日状态重建规则
+
+```text
+C, M  日累计确诊/死亡
+R     累计康复；缺失沿用上一个有效值（W25–W31 为空，因此为 0）
+Q     有 etc_admitted 时用它；否则 isolationRatio × (C-M-R)
+I     max(C - M - Q - R, 0)          => I+Q+R+M = C 严格成立
+E     日新增（优先 7 日滑动均值）/ sigma（day^-1）
+D     安葬延迟(天) × 日死亡（人/天 × 天 = 人）
+S     N - E - I - Q - R - M          => 守恒严格成立
+```
+
+每个分量都带来源标记：
+
+- `q_source`：`etc_admitted` / `isolation_ratio`；
+- `r_source`：`observed` / `carried_forward` / `assumed_zero`；
+- `e_source`、`d_source`：`reconstructed_7d` / `reconstructed_raw` /
+  `reconstructed_diff` / `assumed_zero`。
+
+### 11.4 日尺度速率
+
+| 参数 | 周值 | 日值 |
+|---|---|---|
+| `sigma` | 0.70 /周 | 0.10 /天 |
+| `gamma = gammaQ` | 0.21 /周 | 0.03 /天 |
+| `mu = muQ` | 0.235 /周 | 0.03357 /天 |
+| `alpha` | 1.244 /周 | 0.1777 /天 |
+| `nu` | 3.5 /周 | 0.5 /天 |
+
+延迟换算：`alpha = 1/d_alpha`、`nu = 1/d_nu`（d 以天计）。
+`R0` 公式结构不变，因为分子分母使用同一时间单位。
+
+### 11.5 拟合与验证窗口
+
+- 拟合：2026-06-21 至 2026-10-25（127 天）；
+- 验证：2026-10-26 至 2026-11-09（15 天）；
+- 周聚合校验：W25–W43（拟合段）、W44–W45（验证段）。
+
+### 11.6 P0 验收（12 项，全部 PASS）
+
+1. 2026-06-21 = 1,048 / 267；
+2. 2026-10-25 = 10,060 / 4,887；
+3. 2026-11-09 = 11,042 / 5,387；
+4. `S+E+I+Q+R+M = N`，误差 0；
+5. `I+Q+R+M = C`，误差 0；
+6. 日表聚合到 21 个周日，与周表逐位一致（0 差异）；
+7. 8 省人口合计 38,393,224；
+8. 67 个卫生区，59 个有人口；
+9. 跨境 4 国；
+10. legacy 回归：W25 1,193/535、W41 9,066/4,381、`Q0=196, I0=350`；
+11. 日覆盖 142 天；
+12. 验证 15 天。
+
+### 11.7 关键结果
+
+- 2,073 例正好落在 **2026-07-14**（C=2,073；前一天 2026-07-13 为 2,011）；
+- 2026-10-25：Q=982、R=2,684、I=1,507、E=725.7、D=81.4；
+- 2026-11-09：Q=904、R=2,990、I=1,761、E=622.9、D=63.7；
+- 2026-06-21：Q=360、R=0、I=421；`E=0、D=0` 是首日边界（`assumed_zero`）。
+
+### 11.8 注意事项
+
+- 首日 `E/D=0` 是边界，不是真实值；P1 可用后续 7 日均值回推，但必须标记；
+- `R=0` 在 2026-08-09 之前是假设（tracker 到 W32 才发布康复）；
+- `etc_admitted` 是 ETC 住院人数，不是确诊隔离人数；
+- 日表有 4 个缺失日（6/26、7/16、7/28、7/29），已 LOCF 并标记；
+- 7/22、7/30 的 catch-up 和 10/30–31 的 harmonisation 已标记；
+- 卫生区死亡合计 4,894 ≠ 国家 5,387，493 例未分配。
 
 ---
 

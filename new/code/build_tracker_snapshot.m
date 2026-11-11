@@ -5,14 +5,18 @@ function snap = build_tracker_snapshot(rawFile, outDir, tag, opts)
 %   snap = build_tracker_snapshot(rawFile, outDir, tag, opts)
 %
 %   Outputs (written to outDir)
-%     national_weekly_<tag>.csv
+%     national_daily_<tag>.csv     (primary daily table)
+%     province_daily_<tag>.csv     (province x day)
+%     national_weekly_<tag>.csv    (aggregation / validation)
 %     province_latest_<tag>.csv
 %     health_zone_latest_<tag>.csv
 %     response_latest_<tag>.csv
 %     snapshot_metadata_<tag>.json
 %
-%   Rules (validated against national_weekly_20261108.csv: zero difference)
-%     - weekly anchor = latest valid country row on or before each Sunday
+%   Rules
+%     daily   : complete calendar; cumulative LOCF; 7-day trailing mean
+%     weekly  : anchor = latest valid country row on or before each Sunday
+%               (validated against national_weekly_20261108.csv: zero diff)
 %     - new_* = difference from the previous weekly anchor
 %     - new_*_adj = sum of daily new_* in the week, excluding rows whose
 %       note contains catch-up or harmonisation
@@ -155,6 +159,83 @@ writetable(W, fullfile(outDir, sprintf('national_weekly_%s.csv', tag)), ...
     'Encoding', 'UTF-8');
 
 % -------------------------------------------------------------------------
+% Daily national table (primary time standard)
+%   complete calendar from the first Sunday to the latest data date;
+%   cumulative fields LOCF; incidence = daily difference and 7-day mean
+% -------------------------------------------------------------------------
+d0 = opts.startSunday;
+dates = (d0:caldays(1):maxDate)';
+nD = numel(dates);
+cumCD = nan(nD, 1);
+cumDD = nan(nD, 1);
+recD = nan(nD, 1);
+etcD = nan(nD, 1);
+commD = nan(nD, 1);
+etcDeathD = nan(nD, 1);
+alertsD = nan(nD, 1);
+labSamD = nan(nD, 1);
+labPosD = nan(nD, 1);
+contactsFD = nan(nD, 1);
+contactsSD = nan(nD, 1);
+vaccD = nan(nD, 1);
+sitrepD = nan(nD, 1);
+noteD = strings(nD, 1);
+flagD = strings(nD, 1);
+
+for k = 1:nD
+    rows = country(country.date == dates(k), :);
+    if isempty(rows)
+        flagD(k) = "missing_day_locf";
+        continue;
+    end
+    a = rows(end, :);
+    cumCD(k) = a.cases;
+    cumDD(k) = a.deaths;
+    recD(k) = getnum(a, 'recovered');
+    etcD(k) = getnum(a, 'etc_admitted');
+    commD(k) = getnum(a, 'community_deaths');
+    etcDeathD(k) = getnum(a, 'etc_deaths');
+    alertsD(k) = getnum(a, 'alerts_received');
+    labSamD(k) = getnum(a, 'lab_samples');
+    labPosD(k) = getnum(a, 'lab_positives');
+    contactsFD(k) = getnum(a, 'contacts_to_follow');
+    contactsSD(k) = getnum(a, 'contacts_seen');
+    vaccD(k) = getnum(a, 'vaccinated_total');
+    sitrepD(k) = getnum(a, 'sitrep');
+    noteD(k) = string(a.note);
+    if contains(noteD(k), "catch-up") || contains(noteD(k), "harmonisation")
+        flagD(k) = "special_report";
+    else
+        flagD(k) = "observed";
+    end
+end
+
+cumCD = fillmissing(cumCD, 'previous');
+cumDD = fillmissing(cumDD, 'previous');
+recD = fillmissing(recD, 'previous');
+etcD = fillmissing(etcD, 'previous');
+
+newCD = [NaN; diff(cumCD)];
+newDD = [NaN; diff(cumDD)];
+newC7D = movmean(newCD, [6 0], 'omitnan');
+newD7D = movmean(newDD, [6 0], 'omitnan');
+neg = newCD < 0 | newDD < 0;
+flagD(neg) = flagD(neg) + ";negative_revision";
+
+ND = table(dates, days(dates - d0), cumCD, cumDD, newCD, newDD, ...
+    newC7D, newD7D, recD, etcD, commD, etcDeathD, alertsD, ...
+    labSamD, labPosD, contactsFD, contactsSD, vaccD, sitrepD, noteD, flagD, ...
+    'VariableNames', {'date', 't_day', 'cum_confirmed', 'cum_deaths', ...
+    'new_confirmed', 'new_deaths', 'new_confirmed_7d', 'new_deaths_7d', ...
+    'recovered', 'etc_admitted', 'community_deaths', 'etc_deaths', ...
+    'alerts_received', 'lab_samples', 'lab_positives', ...
+    'contacts_to_follow', 'contacts_seen', 'vaccinated_total', ...
+    'sitrep', 'note', 'flag'});
+
+writetable(ND, fullfile(outDir, sprintf('national_daily_%s.csv', tag)), ...
+    'Encoding', 'UTF-8');
+
+% -------------------------------------------------------------------------
 % Latest zone snapshot
 % -------------------------------------------------------------------------
 zone = T(T.level == "zone", :);
@@ -276,6 +357,36 @@ writetable(PLout, ...
     'Encoding', 'UTF-8');
 
 % -------------------------------------------------------------------------
+% Daily province table (province x day, cumulative LOCF)
+% -------------------------------------------------------------------------
+PD = table();
+for k = 1:nP
+    sub = prov(prov.province == CANON(k), :);
+    sub = sortrows(sub, 'date');
+    c = nan(nD, 1);
+    d = nan(nD, 1);
+    v = nan(nD, 1);
+    [tf, loc] = ismember(dates, sub.date);
+    c(tf) = sub.cases(loc(tf));
+    d(tf) = sub.deaths(loc(tf));
+    if any(strcmp(sub.Properties.VariableNames, 'vaccinated_total'))
+        v(tf) = sub.vaccinated_total(loc(tf));
+    end
+    c = fillmissing(c, 'previous');
+    d = fillmissing(d, 'previous');
+    v = fillmissing(v, 'previous');
+    nc = [NaN; diff(c)];
+    nd = [NaN; diff(d)];
+    PD = [PD; table(repmat(CANON(k), nD, 1), dates, days(dates - d0), ...
+        repmat(POP(k), nD, 1), c, d, nc, nd, v, ...
+        'VariableNames', {'province', 'date', 't_day', 'population', ...
+        'cum_confirmed', 'cum_deaths', 'new_confirmed', 'new_deaths', ...
+        'vaccinated_total'})]; %#ok<AGROW>
+end
+writetable(PD, fullfile(outDir, sprintf('province_daily_%s.csv', tag)), ...
+    'Encoding', 'UTF-8');
+
+% -------------------------------------------------------------------------
 % Latest response indicators
 %   preferred: headline numbers scraped from the data page (opts.responseTable)
 %   fallback : last 7 bulletins in the raw database
@@ -375,9 +486,12 @@ meta.rows_province = height(prov);
 meta.rows_zone = height(zone);
 meta.weekly_rows = height(W);
 meta.week_range = [week(1) week(end)];
+meta.daily_rows = height(ND);
+meta.daily_range = [string(d0, 'yyyy-MM-dd') string(maxDate, 'yyyy-MM-dd')];
 meta.latest_daily = latestDaily;
 meta.rules = struct( ...
     'weekly_anchor', 'latest valid country row on or before Sunday', ...
+    'daily', 'complete calendar; cumulative LOCF; 7-day trailing mean', ...
     'new', 'difference from previous weekly anchor', ...
     'adjusted', 'sum of daily new_* excluding catch-up/harmonisation', ...
     'zones', 'latest date with zone rows', ...
@@ -423,6 +537,17 @@ end
 function s = fill_string(s)
 s = string(s);
 s(ismissing(s)) = "";
+end
+
+function v = getnum(T, name)
+if any(strcmp(T.Properties.VariableNames, name))
+    v = double(T.(name));
+    if isempty(v)
+        v = NaN;
+    end
+else
+    v = NaN;
+end
 end
 
 function v = carried_metric(T, name)

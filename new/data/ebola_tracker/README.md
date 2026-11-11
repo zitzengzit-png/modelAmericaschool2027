@@ -26,7 +26,8 @@
 | 累计康复 | 2,990 |
 | ETC 住院 | 904（最新日）；W45 周日锚点为 882 |
 | 省 / 卫生区 | 8 / 67（59 个有人口） |
-| 周锚点 | W25–W45（21 个完整周日） |
+| 日表 | 142 天（2026-06-21 至 2026-11-09） |
+| 周表 | 21 个完整周日（W25–W45，仅聚合校验） |
 | W45 锚点 | 2026-11-08：10,990 / 5,354 |
 | 页面指标 | alerts 27,585；positivity 12.6%；contacts seen 79.3%；12 patients/100 beds；vaccinated 21,866；screened 276,403 |
 
@@ -34,7 +35,9 @@
 
 - `ebola-drc-database-20261111.csv`：原始库，9,228 行（国家/省/区三级）；
 - `ebola-drc-database-dictionary-20261111.csv`：字段字典；
-- `national_weekly_20261111.csv`：21 个周锚点，W25–W45；
+- `national_daily_20261111.csv`：**日表（主数据，142 天）**；
+- `province_daily_20261111.csv`：省 × 日表（8 省 × 142 天）；
+- `national_weekly_20261111.csv`：21 个周日锚点（仅聚合校验）；
 - `province_latest_20261111.csv`：8 省，截至 2026-11-09；
 - `health_zone_latest_20261111.csv`：67 区，截至 2026-11-09；
 - `response_latest_20261111.csv`：页面六项指标，截至 2026-11-11；
@@ -62,19 +65,30 @@
 对应的原始库、周表、省表、区表、响应表都在
 `ws/old/data/ebola_tracker/`，仅用于复现旧结果和对照两套序列。
 
-## 周表构建规则
+## 日表 / 周表构建规则
 
-`build_tracker_snapshot.m` 的规则（已用 2026-11-08 原始库回算，
-与旧 `national_weekly_20261108.csv` 逐位一致）：
+`build_tracker_snapshot.m` 的规则：
 
-1. **周锚点**：每个周日取“日期 ≤ 周日且病例/死亡均非空”的最后一条国家行；
-2. **new_confirmed / new_deaths**：与上一个周锚点相减；
-3. **new_confirmed_adj / new_deaths_adj**：对该周内每日 `new_*` 求和，
+**日表（主数据）**
+
+1. 完整日历：2026-06-21 至最新日，共 142 天；
+2. 累计确诊/死亡：当日国家行；缺失日按 LOCF（`missing_day_locf`）；
+3. 日新增：累计差分；`new_*_7d` 为 7 日滑动均值，状态重建优先用它；
+4. `recovered`、`etc_admitted`：当日值，缺失按 LOCF（前导缺失保留为空）；
+5. `flag` 记录 observed / missing_day_locf / special_report / negative_revision；
+6. 省日表：8 省 × 142 天，按省做 LOCF。
+
+**周表（仅聚合校验）**
+
+1. 周锚点：每个周日取“日期 ≤ 周日且病例/死亡均非空”的最后一条国家行；
+2. `new_confirmed` / `new_deaths`：与上一个周锚点相减；
+3. `new_confirmed_adj` / `new_deaths_adj`：该周每日 `new_*` 求和，
    剔除 `note` 含 `catch-up` 或 `harmonisation` 的行；
-4. **只写完整周日**：最后一个完整周日之后的日度数据放在
-   `snapshot_metadata` 的 `latest_daily`，不强行补成一周；
-5. **省/区表**：取各自最新日期的行；区人口从 2026-10-25 汇总表按
-   “省 + 卫生区”合并（59/66 有值）。
+4. 只写完整周日；省/区表取各自最新日期；区人口从 2026-10-25 汇总表
+   按“省 + 卫生区”合并（59/66 有值）。
+
+已用 2026-11-08 原始库回算，周表与旧 `national_weekly_20261108.csv`
+逐位一致。
 
 ## 响应指标
 
@@ -92,6 +106,9 @@
 
 ## 数据注意事项
 
+- 日表有 4 个缺失日（6/26、7/16、7/28、7/29），累计值按 LOCF 补，
+  `flag=missing_day_locf`；另有 7/22、7/30 的 catch-up 和 10/30–31 的
+  harmonisation，`flag=special_report`。
 - `recovered` 在 W25–W31 为空（W32 起才有 869）。`state_at` 按 0 处理
   并标记 `assumed_zero`，会抬高早期 `I`；早期 `R` 应作为情景假设。
 - 旧代码的 `R0=360` 实际是 `etc_admitted`，不是累计康复。

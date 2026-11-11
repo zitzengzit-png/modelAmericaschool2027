@@ -1,13 +1,16 @@
-%% P0: data and configuration acceptance check
-% Run from ws/src/matlab:  p0_check
-% Writes ws/outputs/matlab/P0_*.csv|json
+%% P0: data and configuration acceptance check (daily standard)
+% Run from ws/new/code:  p0_check
+% Writes ws/new/outputs/p0/P0_*.csv|json
 clear; clc;
 
 cfg = config();
-fprintf('=== P0 data check ===\n');
+fprintf('=== P0 daily data check ===\n');
 fprintf('data source : %s\n', cfg.dataSource);
-fprintf('fit window  : W%d-W%d\n', cfg.fitWindow(1), cfg.fitWindow(2));
-fprintf('holdout     : W%d-W%d\n', cfg.holdout(1), cfg.holdout(2));
+fprintf('time unit   : %s\n', cfg.timeUnit);
+fprintf('fit window  : %s .. %s\n', ...
+    string(cfg.fitStart, 'yyyy-MM-dd'), string(cfg.fitEnd, 'yyyy-MM-dd'));
+fprintf('holdout     : %s .. %s\n', ...
+    string(cfg.holdStart, 'yyyy-MM-dd'), string(cfg.holdEnd, 'yyyy-MM-dd'));
 
 data = load_data(cfg);
 
@@ -17,69 +20,69 @@ for k = 1:numel(fn)
     fprintf('%-12s %s\n', fn{k}, data.loadedFrom.(fn{k}));
 end
 
-fprintf('\n--- series ---\n');
+fprintf('\n--- daily series ---\n');
 fprintf('source      : %s\n', data.data_source);
-fprintf('weeks       : W%d-W%d (%d points, fit %d, holdout %d)\n', ...
-    data.series.week(1), data.series.week(end), numel(data.series.week), ...
+fprintf('days        : %s .. %s (%d rows, fit %d, holdout %d)\n', ...
+    string(data.daily.date(1), 'yyyy-MM-dd'), ...
+    string(data.daily.date(end), 'yyyy-MM-dd'), numel(data.daily.date), ...
     numel(data.t), numel(data.holdout.t));
 fprintf('N           : %.0f\n', data.N);
 fprintf('provinces   : %d\n', numel(data.provinces));
 fprintf('zones       : %d (as of %s)\n', data.n_health_zones, data.zone_as_of);
-if isfield(data, 'latestDaily')
-    fprintf('latest daily: %s  %.0f cases / %.0f deaths (SitRep %d)\n', ...
-        data.latestDaily.date, data.latestDaily.cases, ...
-        data.latestDaily.deaths, data.latestDaily.sitrep);
-end
 
 % -------------------------------------------------------------------------
-% 1. Published anchors and fit/holdout split
+% 1. Published daily anchors
 % -------------------------------------------------------------------------
-anchors = [25 1048 267; 43 10060 4887; 45 10990 5354];
+anchorDates = [datetime(2026, 6, 21); datetime(2026, 10, 25); ...
+    datetime(2026, 11, 9)];
+anchorC = [1048; 10060; 11042];
+anchorD = [267; 4887; 5387];
 checkName = strings(0, 1);
 checkStatus = strings(0, 1);
 checkDetail = strings(0, 1);
-for k = 1:size(anchors, 1)
-    w = anchors(k, 1);
-    idx = find(data.series.week == w, 1);
-    ok = ~isempty(idx) && data.series.cases(idx) == anchors(k, 2) && ...
-        data.series.deaths(idx) == anchors(k, 3);
-    checkName(end + 1, 1) = "anchor_W" + w; %#ok<SAGROW>
+
+for k = 1:numel(anchorDates)
+    idx = find(data.daily.date == anchorDates(k), 1);
+    ok = ~isempty(idx) && data.daily.cases(idx) == anchorC(k) && ...
+        data.daily.deaths(idx) == anchorD(k);
+    checkName(end + 1, 1) = "anchor_" + ...
+        string(anchorDates(k), 'yyyy-MM-dd'); %#ok<SAGROW>
     checkStatus(end + 1, 1) = pass_fail(ok); %#ok<SAGROW>
     checkDetail(end + 1, 1) = sprintf('%.0f / %.0f (expected %.0f / %.0f)', ...
-        data.series.cases(idx), data.series.deaths(idx), ...
-        anchors(k, 2), anchors(k, 3)); %#ok<SAGROW>
+        data.daily.cases(idx), data.daily.deaths(idx), ...
+        anchorC(k), anchorD(k)); %#ok<SAGROW>
 end
 
-% 2,073-case counterfactual anchor.
-idx2073 = find(data.series.cases >= 2073, 1);
+% 2,073-case counterfactual anchor (daily interpolation).
+idx2073 = find(data.daily.cases >= 2073, 1);
 if idx2073 > 1
-    c0 = data.series.cases(idx2073 - 1);
-    c1 = data.series.cases(idx2073);
-    d0 = data.series.weekEnd(idx2073 - 1);
-    d1 = data.series.weekEnd(idx2073);
+    c0 = data.daily.cases(idx2073 - 1);
+    c1 = data.daily.cases(idx2073);
+    d0 = data.daily.date(idx2073 - 1);
+    d1 = data.daily.date(idx2073);
     frac = (2073 - c0) / (c1 - c0);
     crossDate = d0 + frac * (d1 - d0);
-    fprintf('\n2,073 cases : between W%d (%.0f, %s) and W%d (%.0f, %s)\n', ...
-        data.series.week(idx2073 - 1), c0, string(d0, 'yyyy-MM-dd'), ...
-        data.series.week(idx2073), c1, string(d1, 'yyyy-MM-dd'));
-    fprintf('              interpolated date %s (use W%d as the anchor)\n', ...
-        string(crossDate, 'yyyy-MM-dd'), data.series.week(idx2073 - 1));
+    fprintf('\n2,073 cases : between %s (%.0f) and %s (%.0f)\n', ...
+        string(d0, 'yyyy-MM-dd'), c0, string(d1, 'yyyy-MM-dd'), c1);
+    fprintf('              interpolated date %s (use %s as the anchor)\n', ...
+        string(crossDate, 'yyyy-MM-dd'), string(d0, 'yyyy-MM-dd'));
 end
 
 % -------------------------------------------------------------------------
-% 2. State reconstruction at key weeks
+% 2. Daily state reconstruction at key dates
 % -------------------------------------------------------------------------
-weeks = [25 28 32 34 41 43 45];
-ST = build_state_table(data, weeks);
+keyDates = [datetime(2026, 6, 21); datetime(2026, 7, 13); ...
+    datetime(2026, 7, 14); datetime(2026, 8, 9); datetime(2026, 10, 11); ...
+    datetime(2026, 10, 25); datetime(2026, 11, 8); datetime(2026, 11, 9)];
+ST = build_state_table(data, keyDates);
 disp(ST);
 writetable(ST, fullfile(cfg.outDir, 'P0_state_reconstruction.csv'));
 
-allWeeks = data.series.week;
-ALL = build_state_table(data, allWeeks);
-writetable(ALL, fullfile(cfg.outDir, 'P0_data_report.csv'));
+ALL = build_state_table(data, data.daily.date);
+writetable(ALL, fullfile(cfg.outDir, 'P0_daily_report.csv'));
 
-consErr = max(abs(ST.conservation_error));
-caseErr = max(abs(ST.I + ST.Q + ST.R + ST.M - ST.C));
+consErr = max(abs(ALL.conservation_error));
+caseErr = max(abs(ALL.I + ALL.Q + ALL.R + ALL.M - ALL.C));
 checkName(end + 1, 1) = "conservation";
 checkStatus(end + 1, 1) = pass_fail(consErr < 1e-6 * data.N);
 checkDetail(end + 1, 1) = sprintf('max |S+E+I+Q+R+M-N| = %.3g', consErr);
@@ -88,7 +91,32 @@ checkStatus(end + 1, 1) = pass_fail(caseErr < 1e-6);
 checkDetail(end + 1, 1) = sprintf('max |I+Q+R+M-C| = %.3g', caseErr);
 
 % -------------------------------------------------------------------------
-% 3. Provinces and zones
+% 3. Weekly aggregation validation (daily -> Sunday anchors)
+% -------------------------------------------------------------------------
+Wk = data.seriesWeekly;
+nWk = numel(Wk.week);
+maxDiffC = 0;
+maxDiffD = 0;
+missingWeeks = 0;
+for k = 1:nWk
+    idx = find(data.daily.date == Wk.weekEnd(k), 1);
+    if isempty(idx)
+        missingWeeks = missingWeeks + 1;
+        continue;
+    end
+    maxDiffC = max(maxDiffC, abs(data.daily.cases(idx) - Wk.cases(k)));
+    maxDiffD = max(maxDiffD, abs(data.daily.deaths(idx) - Wk.deaths(k)));
+end
+fprintf('\nweekly validation: %d anchors, missing %d, max |dC| %.0f, max |dD| %.0f\n', ...
+    nWk, missingWeeks, maxDiffC, maxDiffD);
+checkName(end + 1, 1) = "weekly_aggregation";
+checkStatus(end + 1, 1) = pass_fail(missingWeeks == 0 && ...
+    maxDiffC == 0 && maxDiffD == 0);
+checkDetail(end + 1, 1) = sprintf('%d anchors, max diff %.0f/%.0f', ...
+    nWk, maxDiffC, maxDiffD);
+
+% -------------------------------------------------------------------------
+% 4. Provinces and zones
 % -------------------------------------------------------------------------
 P = data.province_table;
 fprintf('\n--- provinces (as of %s) ---\n', string(P.as_of(1)));
@@ -117,7 +145,7 @@ checkDetail(end + 1, 1) = sprintf('%d zones, %d with population', ...
     data.n_health_zones, sum(isfinite(data.zone_population))); %#ok<SAGROW>
 
 % -------------------------------------------------------------------------
-% 4. Response, cross-border and HCW series
+% 5. Response, cross-border and HCW series
 % -------------------------------------------------------------------------
 fprintf('\n--- response indicators (as of %s) ---\n', data.resp.asOf);
 disp(data.response_table);
@@ -138,7 +166,7 @@ if isfield(data.hcw, 'week') && ~isempty(data.hcw.week)
 end
 
 % -------------------------------------------------------------------------
-% 5. Legacy branch regression (old workbook must still load)
+% 6. Legacy branch regression (weekly workbook must still load)
 % -------------------------------------------------------------------------
 fprintf('\n--- legacy branch regression ---\n');
 L = load_data(false);
@@ -156,63 +184,31 @@ checkStatus(end + 1, 1) = pass_fail(legacyOk); %#ok<SAGROW>
 checkDetail(end + 1, 1) = "W25 1193/535, W41 9066/4381, Q0=196, I0=350"; %#ok<SAGROW>
 
 % -------------------------------------------------------------------------
-% 5b. Data anomalies that Task 2 must disclose
+% 7. Coverage and special days
 % -------------------------------------------------------------------------
-fprintf('\n--- data anomalies ---\n');
-i25 = find(data.series.week == 25, 1);
-if ~isfinite(data.series.recovered(i25))
-    fprintf('W25 recovered is blank: R is assumed 0 (r_source=assumed_zero).\n');
-end
-i45 = find(data.series.week == 45, 1);
-if isfinite(data.series.etcAdmitted(i45))
-    latestEtc = NaN;
-    if isfield(data, 'latestDaily') && isfield(data.latestDaily, 'etc_admitted')
-        latestEtc = data.latestDaily.etc_admitted;
-    end
-    if latestEtc > 0
-        gap = abs(data.series.etcAdmitted(i45) - latestEtc) / latestEtc;
-    else
-        gap = 0;
-    end
-    if gap > 0.2
-        fprintf(['W45 etc_admitted = %.0f vs latest daily %.0f ' ...
-            '(%.0f%% gap): reporting change, flag for P2.\n'], ...
-            data.series.etcAdmitted(i45), latestEtc, 100 * gap);
-    end
-end
-flagged = find(contains(data.series.flags, ...
-    ["adjusted", "no_report", "catch-up", "harmonisation"], ...
+nDays = numel(data.daily.date);
+checkName(end + 1, 1) = "daily_coverage"; %#ok<SAGROW>
+checkStatus(end + 1, 1) = pass_fail(nDays >= 140); %#ok<SAGROW>
+checkDetail(end + 1, 1) = sprintf('%d days, %s..%s', nDays, ...
+    string(data.daily.date(1), 'yyyy-MM-dd'), ...
+    string(data.daily.date(end), 'yyyy-MM-dd')); %#ok<SAGROW>
+
+checkName(end + 1, 1) = "holdout_days"; %#ok<SAGROW>
+checkStatus(end + 1, 1) = pass_fail(numel(data.holdout.t) >= 14); %#ok<SAGROW>
+checkDetail(end + 1, 1) = sprintf('%d days', numel(data.holdout.t)); %#ok<SAGROW>
+
+special = find(contains(data.daily.flags, ...
+    ["special_report", "negative_revision", "missing_day_locf"], ...
     'IgnoreCase', true));
-if isempty(flagged)
-    fprintf('No special weekly flags in %s.\n', data.series.sourceFile);
-else
-    for k = flagged'
-        fprintf('W%d flag: %s\n', data.series.week(k), data.series.flags(k));
-    end
+fprintf('\n--- special days ---\n');
+fprintf('count: %d / %d\n', numel(special), nDays);
+for k = special'
+    fprintf('%s  %s\n', string(data.daily.date(k), 'yyyy-MM-dd'), ...
+        data.daily.flags(k));
 end
-i30 = find(data.series.week == 30, 1);
-if ~isempty(i30) && isfinite(data.series.newCasesRaw(i30)) && ...
-        isfinite(data.series.newCasesAdj(i30)) && ...
-        data.series.newCasesRaw(i30) ~= data.series.newCasesAdj(i30)
-    fprintf('W30 raw new cases %.0f vs adjusted %.0f (catch-up row excluded).\n', ...
-        data.series.newCasesRaw(i30), data.series.newCasesAdj(i30));
-end
-fprintf('zone population: %d / %d known (source %s)\n', ...
-    sum(isfinite(data.zone_population)), data.n_health_zones, ...
-    data.zone_population_source);
-
-checkName(end + 1, 1) = "holdout_points"; %#ok<SAGROW>
-checkStatus(end + 1, 1) = pass_fail(numel(data.holdout.t) == 2); %#ok<SAGROW>
-checkDetail(end + 1, 1) = sprintf('W%d-W%d', ...
-    data.holdout.week(1), data.holdout.week(end)); %#ok<SAGROW>
-
-checkName(end + 1, 1) = "zone_population"; %#ok<SAGROW>
-checkStatus(end + 1, 1) = pass_fail(any(isfinite(data.zone_population))); %#ok<SAGROW>
-checkDetail(end + 1, 1) = sprintf('%d / %d zones with population', ...
-    sum(isfinite(data.zone_population)), data.n_health_zones); %#ok<SAGROW>
 
 % -------------------------------------------------------------------------
-% 6. Checks table and JSON summary
+% 8. Checks table and JSON summary
 % -------------------------------------------------------------------------
 CHK = table(checkName, checkStatus, checkDetail, ...
     'VariableNames', {'check', 'status', 'detail'});
@@ -225,13 +221,22 @@ summary.generated_utc = string(datetime('now', 'TimeZone', 'UTC'), ...
     'yyyy-MM-dd''T''HH:mm:ss');
 summary.config = cfg;
 summary.data_source = data.data_source;
+summary.time_unit = cfg.timeUnit;
 summary.loaded_from = data.loadedFrom;
-summary.fit_window = cfg.fitWindow;
-summary.holdout = cfg.holdout;
+summary.fit_start = string(cfg.fitStart, 'yyyy-MM-dd');
+summary.fit_end = string(cfg.fitEnd, 'yyyy-MM-dd');
+summary.hold_start = string(cfg.holdStart, 'yyyy-MM-dd');
+summary.hold_end = string(cfg.holdEnd, 'yyyy-MM-dd');
+summary.n_days = nDays;
+summary.n_weekly = nWk;
+summary.weekly_validation = struct( ...
+    'missing_weeks', missingWeeks, ...
+    'max_diff_cases', maxDiffC, ...
+    'max_diff_deaths', maxDiffD);
 summary.N = data.N;
 summary.n_provinces = numel(data.provinces);
 summary.n_zones = data.n_health_zones;
-summary.latest_daily = getfield_or(data, 'latestDaily', struct());
+summary.latest_daily = data.latestDaily;
 summary.initial_state = data.state0;
 summary.response = data.resp;
 summary.checks = CHK;
@@ -243,7 +248,7 @@ fclose(fid);
 
 fprintf('\nall checks: %s\n', pass_fail(summary.all_pass));
 fprintf(['wrote P0_checks.csv, P0_state_reconstruction.csv, ' ...
-    'P0_data_report.csv, P0_summary.json to %s\n'], cfg.outDir);
+    'P0_daily_report.csv, P0_summary.json to %s\n'], cfg.outDir);
 if ~summary.all_pass
     warning('p0_check:failed', 'One or more P0 checks failed.');
 end
@@ -251,31 +256,36 @@ end
 % =========================================================================
 % Local functions
 % =========================================================================
-function T = build_state_table(data, weeks)
-n = numel(weeks);
-week = zeros(n, 1);
-weekEnd = strings(n, 1);
+function T = build_state_table(data, dates)
+n = numel(dates);
+date = dates(:);
+tDay = zeros(n, 1);
 C = zeros(n, 1); M = zeros(n, 1); Q = zeros(n, 1); R = zeros(n, 1);
 I = zeros(n, 1); E = zeros(n, 1); D = zeros(n, 1); S = zeros(n, 1);
 qSource = strings(n, 1); rSource = strings(n, 1);
+eSource = strings(n, 1); dSource = strings(n, 1);
 consErr = zeros(n, 1);
+flags = strings(n, 1);
 
 for k = 1:n
-    [~, st] = state_at(data, weeks(k));
-    week(k) = st.week;
-    if isfield(st, 'week_end')
-        weekEnd(k) = string(st.week_end, 'yyyy-MM-dd');
-    end
+    [~, st] = state_at(data, dates(k));
+    date(k) = st.date;
+    tDay(k) = st.t_day;
     C(k) = st.C; M(k) = st.M; Q(k) = st.Q; R(k) = st.R;
     I(k) = st.I; E(k) = st.E; D(k) = st.D; S(k) = st.S;
     qSource(k) = st.q_source;
     rSource(k) = st.r_source;
+    eSource(k) = st.e_source;
+    dSource(k) = st.d_source;
     consErr(k) = st.conservation_error;
+    flags(k) = st.flags;
 end
 
-T = table(week, weekEnd, C, M, Q, R, I, E, D, S, qSource, rSource, ...
-    consErr, 'VariableNames', {'week', 'week_end', 'C', 'M', 'Q', 'R', ...
-    'I', 'E', 'D', 'S', 'q_source', 'r_source', 'conservation_error'});
+T = table(date, tDay, C, M, Q, R, I, E, D, S, qSource, rSource, ...
+    eSource, dSource, consErr, flags, ...
+    'VariableNames', {'date', 't_day', 'C', 'M', 'Q', 'R', 'I', 'E', ...
+    'D', 'S', 'q_source', 'r_source', 'e_source', 'd_source', ...
+    'conservation_error', 'flag'});
 end
 
 function s = pass_fail(ok)
@@ -283,13 +293,5 @@ if ok
     s = "PASS";
 else
     s = "FAIL";
-end
-end
-
-function v = getfield_or(s, name, default)
-if isfield(s, name)
-    v = s.(name);
-else
-    v = default;
 end
 end

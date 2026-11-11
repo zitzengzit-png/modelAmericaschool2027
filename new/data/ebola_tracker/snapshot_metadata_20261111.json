@@ -1,7 +1,7 @@
 {
   "tag": "20261111",
   "raw_file": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\ebola-drc-database-20261111.csv",
-  "built_utc": "2026-11-11T13:00:57",
+  "built_utc": "2026-11-11T13:18:08",
   "max_date": "2026-11-09",
   "rows_total": 9228,
   "rows_country": 172,
@@ -11,6 +11,11 @@
   "week_range": [
     25,
     45
+  ],
+  "daily_rows": 142,
+  "daily_range": [
+    "2026-06-21",
+    "2026-11-09"
   ],
   "latest_daily": {
     "date": "2026-11-09",
@@ -24,6 +29,7 @@
   },
   "rules": {
     "weekly_anchor": "latest valid country row on or before Sunday",
+    "daily": "complete calendar; cumulative LOCF; 7-day trailing mean",
     "new": "difference from previous weekly anchor",
     "adjusted": "sum of daily new_* excluding catch-up/harmonisation",
     "zones": "latest date with zone rows",

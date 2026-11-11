@@ -56,6 +56,7 @@ end
 % Tracker branch
 % =========================================================================
 function data = load_tracker(cfg)
+dailyFile = require_file(cfg.trackerDir, 'national_daily_*.csv');
 weeklyFile = require_file(cfg.trackerDir, 'national_weekly_*.csv');
 provFile = require_file(cfg.trackerDir, 'province_latest_*.csv');
 zoneFile = require_file(cfg.trackerDir, 'health_zone_latest_*.csv');
@@ -64,6 +65,60 @@ crossFile = latest_tracker_file(cfg.trackerDir, 'cross_border_latest_*.csv');
 hcwFile = latest_tracker_file(cfg.trackerDir, 'legacy_weekly_supplement_*.csv');
 rawFile = latest_tracker_file(cfg.trackerDir, 'ebola-drc-database-2*.csv');
 
+% -------------------------------------------------------------------------
+% Daily series (primary time standard)
+% -------------------------------------------------------------------------
+D = readtable(dailyFile, 'Encoding', 'UTF-8', ...
+    'VariableNamingRule', 'preserve', 'TextType', 'string');
+D.date = to_datetime(D.date);
+D = sortrows(D, 'date');
+nD = height(D);
+if nD < 100
+    error('load_data:tooFewDays', ...
+        'Only %d daily rows in %s.', nD, dailyFile);
+end
+
+daily = struct();
+daily.date = D.date;
+daily.t = double(D.t_day);
+daily.cases = double(D.cum_confirmed);
+daily.deaths = double(D.cum_deaths);
+daily.newCases = col(D, 'new_confirmed', nan(nD, 1));
+daily.newDeaths = col(D, 'new_deaths', nan(nD, 1));
+daily.newCases7d = col(D, 'new_confirmed_7d', nan(nD, 1));
+daily.newDeaths7d = col(D, 'new_deaths_7d', nan(nD, 1));
+daily.recovered = col(D, 'recovered', nan(nD, 1));
+daily.etcAdmitted = col(D, 'etc_admitted', nan(nD, 1));
+daily.communityDeaths = col(D, 'community_deaths', nan(nD, 1));
+daily.etcDeaths = col(D, 'etc_deaths', nan(nD, 1));
+daily.sitrep = col(D, 'sitrep', nan(nD, 1));
+daily.flags = string(D.flag);
+daily.note = string(D.note);
+daily.sourceFile = dailyFile;
+
+% Published daily anchors.
+assert_day_anchor(daily, datetime(2026, 6, 21), 1048, 267, cfg.strict);
+assert_day_anchor(daily, datetime(2026, 10, 25), 10060, 4887, cfg.strict);
+assert_day_anchor(daily, datetime(2026, 11, 9), 11042, 5387, cfg.strict);
+
+fitMask = daily.date >= cfg.fitStart & daily.date <= cfg.fitEnd;
+holdMask = daily.date >= cfg.holdStart & daily.date <= cfg.holdEnd;
+if nnz(fitMask) < 100
+    error('load_data:shortFit', ...
+        'Daily fit window %s..%s has only %d points.', ...
+        string(cfg.fitStart, 'yyyy-MM-dd'), ...
+        string(cfg.fitEnd, 'yyyy-MM-dd'), nnz(fitMask));
+end
+if nnz(holdMask) < 7
+    error('load_data:shortHoldout', ...
+        'Daily holdout %s..%s has only %d points.', ...
+        string(cfg.holdStart, 'yyyy-MM-dd'), ...
+        string(cfg.holdEnd, 'yyyy-MM-dd'), nnz(holdMask));
+end
+
+% -------------------------------------------------------------------------
+% Weekly series (aggregation / validation only, not the state time base)
+% -------------------------------------------------------------------------
 W = readtable(weeklyFile, 'Encoding', 'UTF-8', ...
     'VariableNamingRule', 'preserve', 'TextType', 'string');
 W = sortrows(W, 'week');
@@ -97,56 +152,67 @@ series.fixedD = nan(nW, 1);
 series.flags = string(W.flag);
 series.sourceFile = weeklyFile;
 
-% Published anchors.
+% Published weekly anchors (validation layer only).
 assert_anchor(series, 25, 1048, 267, cfg.strict);
 assert_anchor(series, 43, 10060, 4887, cfg.strict);
 assert_anchor(series, 45, 10990, 5354, cfg.strict);
 
-fitMask = series.week >= cfg.fitWindow(1) & series.week <= cfg.fitWindow(2);
-holdMask = series.week >= cfg.holdout(1) & series.week <= cfg.holdout(2);
-if nnz(fitMask) < 10
-    error('load_data:shortFit', ...
-        'Fit window W%d-W%d has only %d points.', ...
-        cfg.fitWindow(1), cfg.fitWindow(2), nnz(fitMask));
-end
-
 data = struct();
 data.cfg = cfg;
+data.timeUnit = cfg.timeUnit;
+data.dayZero = cfg.dayZero;
 data.data_source = 'ebola-tracker.org database';
-data.series = series;
-data.N = 38393224;              % 8 provinces, WorldPop 2026 + Nord-Ubangi est.
+data.daily = daily;
+data.series = series;              % weekly aggregation / validation
+data.seriesWeekly = series;
+data.N = 38393224;                 % 8 provinces, WorldPop 2026 + Nord-Ubangi est.
 
-data.fitWindow = cfg.fitWindow;
-data.holdoutWindow = cfg.holdout;
-data.t = series.t(fitMask);
-data.week = series.week(fitMask);
-data.weekEnd = series.weekEnd(fitMask);
-data.cases = series.cases(fitMask);
-data.deaths = series.deaths(fitMask);
-data.casesAdj = series.newCasesAdj(fitMask);
-data.deathsAdj = series.newDeathsAdj(fitMask);
-data.flags = series.flags(fitMask);
+data.fitStart = cfg.fitStart;
+data.fitEnd = cfg.fitEnd;
+data.holdStart = cfg.holdStart;
+data.holdEnd = cfg.holdEnd;
+data.fitWeeks = cfg.fitWeeks;
+data.holdWeeks = cfg.holdWeeks;
+data.fitWindow = cfg.fitWeeks;     % backward-compatible numeric alias
+data.holdoutWindow = cfg.holdWeeks;
 
-data.fit = struct('t', data.t, 'week', data.week, ...
+data.t = daily.t(fitMask);
+data.dates = daily.date(fitMask);
+data.cases = daily.cases(fitMask);
+data.deaths = daily.deaths(fitMask);
+data.newCases = daily.newCases(fitMask);
+data.newDeaths = daily.newDeaths(fitMask);
+data.newCases7d = daily.newCases7d(fitMask);
+data.newDeaths7d = daily.newDeaths7d(fitMask);
+data.flags = daily.flags(fitMask);
+
+data.fit = struct('t', data.t, 'date', data.dates, ...
     'cases', data.cases, 'deaths', data.deaths, ...
-    'newCasesAdj', data.casesAdj, 'newDeathsAdj', data.deathsAdj);
-data.holdout = struct('t', series.t(holdMask), 'week', series.week(holdMask), ...
-    'cases', series.cases(holdMask), 'deaths', series.deaths(holdMask), ...
-    'newCasesAdj', series.newCasesAdj(holdMask), ...
-    'newDeathsAdj', series.newDeathsAdj(holdMask));
+    'newCases', data.newCases, 'newDeaths', data.newDeaths, ...
+    'newCases7d', data.newCases7d, 'newDeaths7d', data.newDeaths7d);
+data.holdout = struct('t', daily.t(holdMask), ...
+    'date', daily.date(holdMask), ...
+    'cases', daily.cases(holdMask), 'deaths', daily.deaths(holdMask), ...
+    'newCases', daily.newCases(holdMask), ...
+    'newDeaths', daily.newDeaths(holdMask), ...
+    'newCases7d', daily.newCases7d(holdMask), ...
+    'newDeaths7d', daily.newDeaths7d(holdMask));
 
-data.endpoint_t = max(series.t);
-data.endpoint_cases = series.cases(end);
-data.endpoint_deaths = series.deaths(end);
+data.endpoint_t = max(daily.t);
+data.endpoint_cases = daily.cases(end);
+data.endpoint_deaths = daily.deaths(end);
 
-% Latest daily row (may be one or two days ahead of the last Sunday).
-if ~isempty(rawFile)
-    data.latestDaily = read_latest_daily(rawFile);
-    if isfield(data.latestDaily, 'sitrep') && isfinite(data.latestDaily.sitrep)
-        data.data_source = sprintf( ...
-            'ebola-tracker.org database, latest daily %s (SitRep %d)', ...
-            data.latestDaily.date, data.latestDaily.sitrep);
-    end
+% Latest daily row (daily table is already the primary series).
+data.latestDaily = struct( ...
+    'date', string(daily.date(end), 'yyyy-MM-dd'), ...
+    'cases', daily.cases(end), 'deaths', daily.deaths(end), ...
+    'new_cases', daily.newCases(end), 'new_deaths', daily.newDeaths(end), ...
+    'sitrep', daily.sitrep(end));
+if isfinite(daily.sitrep(end))
+    data.data_source = sprintf( ...
+        'ebola-tracker.org daily series %s..%s (SitRep %d)', ...
+        string(daily.date(1), 'yyyy-MM-dd'), ...
+        string(daily.date(end), 'yyyy-MM-dd'), daily.sitrep(end));
 end
 
 % -------------------------------------------------------------------------
@@ -257,7 +323,7 @@ end
 % -------------------------------------------------------------------------
 % Initial state at the start of the fit window
 % -------------------------------------------------------------------------
-[y0, st0] = state_at(data, cfg.fitWindow(1));
+[y0, st0] = state_at(data, cfg.fitStart);
 data.y0 = y0;
 data.state0 = st0;
 data.C0 = st0.C;
@@ -453,6 +519,22 @@ if series.cases(idx) ~= cases || series.deaths(idx) ~= deaths
 end
 end
 
+function assert_day_anchor(s, date, cases, deaths, strict)
+if ~strict
+    return;
+end
+idx = find(s.date == date, 1);
+if isempty(idx)
+    error('load_data:dayAnchorMissing', ...
+        'Date %s missing from the daily series.', string(date, 'yyyy-MM-dd'));
+end
+if s.cases(idx) ~= cases || s.deaths(idx) ~= deaths
+    error('load_data:dayAnchorMismatch', ...
+        '%s anchors are %.0f/%.0f, expected %.0f/%.0f.', ...
+        string(date, 'yyyy-MM-dd'), s.cases(idx), s.deaths(idx), cases, deaths);
+end
+end
+
 function v = metric_value(T, name)
 v = NaN;
 if isempty(T) || ~any(strcmp(T.Properties.VariableNames, 'metric'))
@@ -474,35 +556,4 @@ for k = 1:numel(s)
 end
 end
 
-function s = read_latest_daily(rawFile)
-opts = detectImportOptions(rawFile, 'Encoding', 'UTF-8', ...
-    'VariableNamingRule', 'preserve', 'TextType', 'string');
-want = {'date', 'level', 'sitrep', 'cases', 'deaths', ...
-    'new_cases', 'new_deaths', 'recovered', 'etc_admitted'};
-opts.SelectedVariableNames = want(ismember(want, opts.VariableNames));
-T = readtable(rawFile, opts);
-T = T(lower(strtrim(string(T.level))) == "country", :);
-T.date = datetime(string(T.date), 'InputFormat', 'yyyy-MM-dd');
-T = sortrows(T, 'date');
-valid = ~isnan(T.cases) & ~isnan(T.deaths);
-T = T(valid, :);
-a = T(end, :);
 
-s = struct();
-s.date = string(a.date, 'yyyy-MM-dd');
-s.cases = a.cases;
-s.deaths = a.deaths;
-s.new_cases = getnum(a, 'new_cases');
-s.new_deaths = getnum(a, 'new_deaths');
-s.recovered = getnum(a, 'recovered');
-s.etc_admitted = getnum(a, 'etc_admitted');
-s.sitrep = getnum(a, 'sitrep');
-end
-
-function v = getnum(a, name)
-if any(strcmp(a.Properties.VariableNames, name))
-    v = a.(name);
-else
-    v = NaN;
-end
-end
