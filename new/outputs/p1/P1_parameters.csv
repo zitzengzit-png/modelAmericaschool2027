@@ -1,0 +1,14 @@
+parameter,estimate,unit
+betaC0,0.121653185785969,day^-1
+u1,0.431003772447918,-
+u2,-0.498523215383178,-
+alpha0,0.302270580373324,day^-1
+mu,0.0348358309561158,day^-1
+rhoRep,0.999189203455554,-
+sigma,0.1,day^-1
+gamma,0.03,day^-1
+gammaQ,0.03,day^-1
+nu,0.5,day^-1
+rhoH0,0.4,-
+rhoF0,3,-
+rhoM,1,-

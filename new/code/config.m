@@ -21,6 +21,7 @@ cfg.dataDir         = fullfile(cfg.newRoot, 'data');
 cfg.trackerDir      = fullfile(cfg.dataDir, 'ebola_tracker');
 cfg.legacyWorkbook  = fullfile(cfg.oldRoot, 'data', 'outbreak_data.xlsx');
 cfg.outDir          = fullfile(cfg.newRoot, 'outputs', 'p0');
+cfg.p1OutDir        = fullfile(cfg.newRoot, 'outputs', 'p1');
 cfg.frozenSourceDir = fullfile(cfg.oldRoot, 'code', 'matlab'); % legacy, do not edit
 
 % Data source and time standard (day).
@@ -64,6 +65,20 @@ cfg.tracingDelayDays = 1.0;      % days, traced contact to isolation
 cfg.isolationRatio   = 0.40;     % fallback Q / (C-M-R) when ETC data missing
 cfg.reportFrac       = 1.0;      % observation reporting fraction (P2)
 
+% P1: daily three-route fitting settings.
+cfg.rhoH0      = 0.40;           % betaH / betaC baseline (net excess hospital)
+cfg.rhoF0      = 3.00;           % betaF / betaC baseline (funeral)
+cfg.rhoM       = 1.00;           % death reporting ratio
+cfg.betaC0     = 0.20;           % day^-1, initial guess
+cfg.u1         = 0.30;           % reduction at the first knot
+cfg.u2         = 0.10;           % second-phase multiplier; negative = rebound
+cfg.rhoRep     = 0.70;           % case reporting ratio, initial guess
+cfg.betaKnots  = [datetime(2026, 8, 17); datetime(2026, 10, 11)];
+cfg.alphaPrior = 0.15;           % weak prior for alpha0 (day^-1)
+cfg.muPrior    = 0.030;          % weak prior for mu (day^-1)
+cfg.fitWeights = struct('mu', 1.0, 'weekly', 0.3, 'cfr', 5.0, ...
+    'alpha', 0.3, 'muPrior', 0.3, 'rho', 0.3);
+
 % Output naming.
 cfg.outTag = 'v2';
 
@@ -91,6 +106,9 @@ end
 
 if ~exist(cfg.outDir, 'dir')
     mkdir(cfg.outDir);
+end
+if ~exist(cfg.p1OutDir, 'dir')
+    mkdir(cfg.p1OutDir);
 end
 end
 

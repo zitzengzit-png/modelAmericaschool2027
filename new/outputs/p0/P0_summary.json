@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-11T13:18:22",
+  "generated_utc": "2026-11-11T14:07:42",
   "config": {
     "wsRoot": "D:\\MATHmodelAmericaschool2027\\ws",
     "oldRoot": "D:\\MATHmodelAmericaschool2027\\ws\\old",
@@ -9,6 +9,7 @@
     "trackerDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker",
     "legacyWorkbook": "D:\\MATHmodelAmericaschool2027\\ws\\old\\data\\outbreak_data.xlsx",
     "outDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p0",
+    "p1OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p1",
     "frozenSourceDir": "D:\\MATHmodelAmericaschool2027\\ws\\old\\code\\matlab",
     "dataSource": "tracker",
     "timeUnit": "day",
@@ -64,6 +65,27 @@
     "tracingDelayDays": 1,
     "isolationRatio": 0.4,
     "reportFrac": 1,
+    "rhoH0": 0.4,
+    "rhoF0": 3,
+    "rhoM": 1,
+    "betaC0": 0.2,
+    "u1": 0.3,
+    "u2": 0.1,
+    "rhoRep": 0.7,
+    "betaKnots": [
+      "2026-08-17",
+      "2026-10-11"
+    ],
+    "alphaPrior": 0.15,
+    "muPrior": 0.03,
+    "fitWeights": {
+      "mu": 1,
+      "weekly": 0.3,
+      "cfr": 5,
+      "alpha": 0.3,
+      "muPrior": 0.3,
+      "rho": 0.3
+    },
     "outTag": "v2"
   },
   "data_source": "ebola-tracker.org daily series 2026-06-21..2026-11-09 (SitRep 179)",
