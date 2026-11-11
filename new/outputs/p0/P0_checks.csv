@@ -1,0 +1,12 @@
+check,status,detail
+anchor_W25,PASS,"1048 / 267 (expected 1048 / 267)"
+anchor_W43,PASS,"10060 / 4887 (expected 10060 / 4887)"
+anchor_W45,PASS,"10990 / 5354 (expected 10990 / 5354)"
+conservation,PASS,"max |S+E+I+Q+R+M-N| = 0"
+case_identity,PASS,"max |I+Q+R+M-C| = 0"
+province_population_sum,PASS,"sum 38393224 vs N 38393224"
+zone_count,PASS,"67 zones, 59 with population"
+cross_border_rows,PASS,"4 countries"
+legacy_regression,PASS,"W25 1193/535, W41 9066/4381, Q0=196, I0=350"
+holdout_points,PASS,"W44-W45"
+zone_population,PASS,"59 / 67 zones with population"

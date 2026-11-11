@@ -1,0 +1,13 @@
+parameter,estimate,unit
+beta0,1.29500547613373,week^-1
+beta1,0.844665567523611,week^-1
+tau,7,week index
+alpha,1.23760854574525,week^-1
+mu,0.234952860325223,week^-1
+nu,3.5,week^-1
+sigma,0.7,week^-1
+gamma,0.21,week^-1
+gammaQ,0.21,week^-1
+kappa,3,-
+R0_early,1.35578988744782,-
+R0_late,0.88431211746137,-

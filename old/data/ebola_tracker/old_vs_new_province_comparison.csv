@@ -1,0 +1,9 @@
+﻿province,old_W41_cases,new_W41_cases,new_W43_cases,new_W45_cases,old_W41_deaths,new_W41_deaths,new_W43_deaths,new_W45_deaths,delta_W41_cases_new_minus_old,delta_W41_deaths_new_minus_old,delta_W43_vs_old_W41_cases,delta_W43_vs_old_W41_deaths,note
+Ituri,6695,6695,7211,7654,3099,3099,3370,3613,0,0,516,271,
+Nord-Kivu,1911,1911,2309,2720,1092,1092,1293,1488,0,0,398,201,
+Haut-Uele,383,382,436,491,162,162,190,214,-1,0,53,28,new W41 matches old except Haut-Uele -1 case
+Tshopo,59,59,83,98,22,22,27,32,0,0,24,5,
+Bas-Uele,13,13,13,13,4,4,4,4,0,0,0,0,
+Nord-Ubangi,0,0,3,9,0,0,1,1,0,0,3,1,new province after W41
+Sud-Kivu,3,3,3,3,1,1,1,1,0,0,0,0,
+Sud-Ubangi,2,2,2,2,1,1,1,1,0,0,0,0,

@@ -1,0 +1,29 @@
+﻿column,group,type,unit,origin,definition
+date,identification,date,YYYY-MM-DD,identification,Date of the situation report the row is taken from.
+level,identification,txt,text,identification,"Level of the row: country, province or zone. The three levels overlap: filter on this column before adding up."
+province,identification,txt,text,identification,Province. Empty on country rows.
+zone,identification,txt,text,identification,"Health zone, as named in the latest bulletin. Empty on country and province rows."
+sitrep,identification,int,count,identification,Number of the INSP situation report (SitRep) the row is taken from.
+source_pdf,identification,txt,text,identification,Address of the PDF of this SitRep. Empty on a reconstructed row.
+note,identification,txt,text,identification,"Flags a special row. “catch-up”: the difference covers more than one day (22 and 30 July). “reconstructed”: SitRep 142 was never published; the day is computed by subtraction from SitRep 143. “harmonisation”: the source corrected its series that day (Ituri: +314 earlier deaths on 30 October, removed on 31 October); the difference does not reflect new cases or deaths. “WHO Weekly Report … (manual reading)”: value read from a WHO report."
+cases,outbreak,int,count,published,"Cumulative confirmed cases since the start of the outbreak, as published by the bulletin."
+new_cases,outbreak,int,count,computed,Difference in cumulative cases from the previous reading for the same area. Negative: downward revision by the source. May differ from the new cases announced by the bulletin.
+days_covered,outbreak,int,days,computed,"Number of days covered by the difference, since the previous reading for the same area (1 = from one day to the next)."
+deaths,outbreak,int,count,published,"Cumulative deaths since the start of the outbreak, as published by the bulletin."
+new_deaths,outbreak,int,count,computed,Difference in cumulative deaths from the previous reading for the same area. Negative: downward revision by the source.
+cfr,outbreak,pct,%,computed,"Case fatality rate: cumulative deaths divided by cumulative confirmed cases, in per cent."
+recovered,outbreak,int,count,published,"Cumulative recoveries, published for the country only."
+community_deaths,response,int,count,published,"Confirmed deaths of the day in the community, since 13 July."
+etc_deaths,response,int,count,published,"Confirmed deaths of the day in a treatment centre (ETC), since 13 July. By zone, some are not assigned to any zone and appear only under the province."
+alerts_received,response,int,count,published,"Alerts received that day, since 1 June."
+alerts_validated,response,int,count,published,Alerts validated as suspected cases that day.
+lab_samples,response,int,count,published,Samples tested by laboratories that day.
+lab_positives,response,int,count,published,Positive samples that day.
+lab_positivity,response,pct,%,computed,"Positive results divided by samples tested, in per cent; only when both are published."
+etc_admitted,response,int,count,published,People hospitalised in treatment centres (ETC) that day.
+etc_beds,response,int,count,published,Beds available in the ETCs.
+etc_occupancy,response,pct,%,"published, otherwise computed","Bed occupancy rate published by the bulletin; if missing, patients divided by beds."
+contacts_to_follow,response,int,count,published,Contacts to follow up that day.
+contacts_seen,response,int,count,published,Contacts seen that day.
+contacts_seen_pct,response,pct,%,published,"Share of contacts seen, as published by the bulletin."
+vaccinated_total,response,int,count,published,"Cumulative people vaccinated, published by province."

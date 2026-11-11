@@ -1,0 +1,9 @@
+﻿province,population,population_source,cum_confirmed,share_pct,new_confirmed_24h,new_confirmed_30d,cum_deaths,new_deaths_24h,new_deaths_30d,cfr,zones_affected,zones_total,as_of,sitrep
+Bas-Uele,2032860,WorldPop2026_7prov,13,0.12,0,0,4,0,0,30.8,4,11,2026-11-08,178
+Haut-Uele,3361576,WorldPop2026_7prov,491,4.47,5,119,214,1,57,43.6,7,13,2026-11-08,178
+Ituri,6556455,WorldPop2026_7prov,7654,69.65,40,1045,3613,19,548,47.2,28,36,2026-11-08,178
+Nord-Kivu,9095202,WorldPop2026_7prov,2720,24.75,23,862,1488,10,423,54.7,17,34,2026-11-08,178
+Nord-Ubangi,1500000,estimate_1.5M,9,0.08,0,7,1,0,0,11.1,2,11,2026-11-08,178
+Sud-Kivu,7879065,WorldPop2026_7prov,3,0.03,0,0,1,0,0,33.3,1,34,2026-11-08,178
+Sud-Ubangi,3808453,WorldPop2026_7prov,2,0.02,0,0,1,0,0,50.0,1,16,2026-11-08,178
+Tshopo,4159613,WorldPop2026_7prov,98,0.89,2,41,32,1,10,32.7,7,23,2026-11-08,178

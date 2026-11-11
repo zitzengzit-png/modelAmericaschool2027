@@ -1,0 +1,159 @@
+{
+  "generated_utc": "2026-11-11T12:45:25",
+  "config": {
+    "wsRoot": "D:\\MATHmodelAmericaschool2027\\ws",
+    "oldRoot": "D:\\MATHmodelAmericaschool2027\\ws\\old",
+    "newRoot": "D:\\MATHmodelAmericaschool2027\\ws\\new",
+    "docsDir": "D:\\MATHmodelAmericaschool2027\\ws\\docs",
+    "dataDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data",
+    "trackerDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker",
+    "legacyWorkbook": "D:\\MATHmodelAmericaschool2027\\ws\\old\\data\\outbreak_data.xlsx",
+    "outDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p0",
+    "frozenSourceDir": "D:\\MATHmodelAmericaschool2027\\ws\\old\\code\\matlab",
+    "dataSource": "tracker",
+    "fitWindow": [
+      25,
+      43
+    ],
+    "holdout": [
+      44,
+      45
+    ],
+    "strict": true,
+    "modelVariant": "v2",
+    "hospitalTerm": true,
+    "nKnots": 3,
+    "knotWeeks": [
+      28,
+      34,
+      41
+    ],
+    "sigma": 0.7,
+    "burialDelayDays": 2,
+    "tracingDelayDays": 1,
+    "isolationRatio": 0.4,
+    "reportFrac": 1,
+    "outTag": "v2"
+  },
+  "data_source": "ebola-tracker.org database, latest daily 2026-11-09 (SitRep 179)",
+  "loaded_from": {
+    "weekly": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\national_weekly_20261111.csv",
+    "province": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\province_latest_20261111.csv",
+    "zone": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\health_zone_latest_20261111.csv",
+    "response": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\response_latest_20261111.csv",
+    "crossBorder": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\cross_border_latest_20261108.csv",
+    "hcw": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\legacy_weekly_supplement_W29-W41.csv",
+    "raw": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\ebola-drc-database-20261111.csv"
+  },
+  "fit_window": [
+    25,
+    43
+  ],
+  "holdout": [
+    44,
+    45
+  ],
+  "N": 3.8393224E+7,
+  "n_provinces": 8,
+  "n_zones": 67,
+  "latest_daily": {
+    "date": "2026-11-09",
+    "cases": 11042,
+    "deaths": 5387,
+    "new_cases": 52,
+    "new_deaths": 33,
+    "recovered": "2990",
+    "etc_admitted": 904,
+    "sitrep": 179
+  },
+  "initial_state": {
+    "week": 25,
+    "week_end": "2026-06-21",
+    "S": 3.8391833142857142E+7,
+    "E": 342.85714285714289,
+    "I": 421,
+    "Q": 360,
+    "R": 0,
+    "D": 21.428571428571427,
+    "M": 267,
+    "C": 1048,
+    "new_cases": 240,
+    "new_deaths": 75,
+    "q_source": "etc_admitted",
+    "r_source": "assumed_zero",
+    "e_source": "reconstructed",
+    "d_source": "reconstructed",
+    "sigma": 0.7,
+    "burial_delay_days": 2,
+    "isolation_ratio": 0.4,
+    "conservation_error": 0,
+    "case_identity_error": 0
+  },
+  "response": {
+    "asOf": "2026-11-11",
+    "alertsReceived": 27585,
+    "testPositivity": 12.6,
+    "contactsSeenPct": 79.3,
+    "patientsPer100Beds": 12,
+    "vaccinatedTotal": 21866,
+    "travellersScreened": 276403
+  },
+  "checks": [
+    {
+      "check": "anchor_W25",
+      "status": "PASS",
+      "detail": "1048 / 267 (expected 1048 / 267)"
+    },
+    {
+      "check": "anchor_W43",
+      "status": "PASS",
+      "detail": "10060 / 4887 (expected 10060 / 4887)"
+    },
+    {
+      "check": "anchor_W45",
+      "status": "PASS",
+      "detail": "10990 / 5354 (expected 10990 / 5354)"
+    },
+    {
+      "check": "conservation",
+      "status": "PASS",
+      "detail": "max |S+E+I+Q+R+M-N| = 0"
+    },
+    {
+      "check": "case_identity",
+      "status": "PASS",
+      "detail": "max |I+Q+R+M-C| = 0"
+    },
+    {
+      "check": "province_population_sum",
+      "status": "PASS",
+      "detail": "sum 38393224 vs N 38393224"
+    },
+    {
+      "check": "zone_count",
+      "status": "PASS",
+      "detail": "67 zones, 59 with population"
+    },
+    {
+      "check": "cross_border_rows",
+      "status": "PASS",
+      "detail": "4 countries"
+    },
+    {
+      "check": "legacy_regression",
+      "status": "PASS",
+      "detail": "W25 1193/535, W41 9066/4381, Q0=196, I0=350"
+    },
+    {
+      "check": "holdout_points",
+      "status": "PASS",
+      "detail": "W44-W45"
+    },
+    {
+      "check": "zone_population",
+      "status": "PASS",
+      "detail": "59 / 67 zones with population"
+    }
+  ],
+  "all_pass": true
+}

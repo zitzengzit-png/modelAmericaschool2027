@@ -1,0 +1,32 @@
+{
+  "tag": "20261111",
+  "raw_file": "D:\\MATHmodelAmericaschool2027\\ws\\new\\data\\ebola_tracker\\ebola-drc-database-20261111.csv",
+  "built_utc": "2026-11-11T12:45:41",
+  "max_date": "2026-11-09",
+  "rows_total": 9228,
+  "rows_country": 172,
+  "rows_province": 913,
+  "rows_zone": 8143,
+  "weekly_rows": 21,
+  "week_range": [
+    25,
+    45
+  ],
+  "latest_daily": {
+    "date": "2026-11-09",
+    "cases": 11042,
+    "deaths": 5387,
+    "new_cases": 52,
+    "new_deaths": 33,
+    "recovered": 2990,
+    "etc_admitted": 904,
+    "sitrep": 179
+  },
+  "rules": {
+    "weekly_anchor": "latest valid country row on or before Sunday",
+    "new": "difference from previous weekly anchor",
+    "adjusted": "sum of daily new_* excluding catch-up/harmonisation",
+    "zones": "latest date with zone rows",
+    "province_population": "WorldPop 2026; Nord-Ubangi 1.5M estimate"
+  }
+}

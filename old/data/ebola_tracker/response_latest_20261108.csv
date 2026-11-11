@@ -1,0 +1,7 @@
+﻿metric,value,unit,period,as_of
+alerts_received,25617,alerts,last 7 bulletins,2026-11-08
+test_positivity,13.3,%,last 7 bulletins,2026-11-08
+contacts_seen,79.9,%,last 7 bulletins,2026-11-08
+patients_per_100_beds,64,patients/100 beds,latest,2026-11-08
+vaccinated_total,13164,people,cumulative,2026-11-08
+travellers_screened,276403,people,last bulletin,2026-11-08
