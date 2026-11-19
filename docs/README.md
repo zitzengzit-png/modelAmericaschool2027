@@ -6,6 +6,7 @@
 | `DATA_SOURCE_AND_PREPROCESSING.md` | Task 2 数据来源与预处理：源、字段、日/周构建、质量标记、验证、论文简版、固定参数来历 | 新题（Task 2） |
 | `数据处理方案确定.md` | Task 2 数据侧最终决策：三方案对比、日尺度参数分类、重参数化、观测方程、不确定性 | 新题（Task 2） |
 | `要求一建模.md` | Task 1 正式建模草稿：三通道 SEIQRD、时变参数、R0/Reff 推导、守恒与数值解法（时间单位：天） | 新题（Task 1） |
+| `第三问建模.md` | Task 3 干预建模：8 类干预→参数映射、控制函数、单因素/组合/时机/追踪资源、持续时间 | 新题（Task 3） |
 | `SEIQRD_状态转移图.png` | Task 1 状态转移与三类感染反馈图（由 `new/code/task1_state_diagram.py` 生成） | 新题（Task 1） |
 | `MODEL_ARCHITECTURE.md` | 旧 SEIQRD 模型方程、参数、数据流、已知问题、运行注意 | 旧模型（legacy，周尺度，已冻结） |
 
@@ -18,7 +19,8 @@
 5. `DATA_SOURCE_AND_PREPROCESSING.md`：Task 2 数据来源、预处理、质量标记和论文用简版；
 6. `要求一建模.md`：Task 1 的方程、R0/Reff 推导与守恒约束（已统一为天）；
 7. `数据处理方案确定.md`：Task 2 参数化与拟合方案（日尺度参数、观测方程、bootstrap/profile）；
-8. 需要旧模型细节时，再查 `MODEL_ARCHITECTURE.md`。
+8. `第三问建模.md`：Task 3 干预映射、情景设计与资源公式；
+9. 需要旧模型细节时，再查 `MODEL_ARCHITECTURE.md`。
 
 ## 与其他目录的关系
 
