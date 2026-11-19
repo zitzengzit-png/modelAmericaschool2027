@@ -36,11 +36,20 @@
 - legacy R0 1.355789887/0.884312117 与新版谱半径校验 6/6 PASS；
 - 结果：`ws/new/outputs/task1/`。
 
+**Q2 日尺度对齐（第二问方法）已完成，2026-11-19。**
+
+- `q2_daily_observations_20261111.csv`：142 天，fit 127 / holdout 15；
+- 6 参数、`βc+ρh+ρf`、对数 NLS、CFR 软约束、MultiStart 8；
+- 固定 `ρ_rep=1` 基线；自由 0.885 作敏感性；
+- profile `α0/ρ_rep/ρh0`、2/3 节点 + τ 网格、14/21 天块 bootstrap；
+- τ 网格显示 9/20 优于 10/11（AIC −1359.97，holdout 1.91%/0.79%）；
+- 结果：`ws/new/outputs/q2/`。
+
 ## 目录结构
 
 ```text
 new/
-├── code/                  P0/P1/P2/Task1 代码（27 个 .m + 1 个 .py）
+├── code/                  P0/P1/P2/Q2/Task1 代码（30 个 .m + 1 个 .py）
 ├── data/
 │   ├── README.md
 │   └── ebola_tracker/     2026-11-11 日表/周表/省日表 + 共享输入
@@ -49,6 +58,7 @@ new/
 │   ├── p0/                P0 验收输出（4 个文件）
 │   ├── p1/                P1 拟合输出（6 个文件）
 │   ├── p2/                P2 不确定性输出（24 个文件，含 README）
+│   ├── q2/                Q2 日尺度对齐输出（参数/profile/节点/τ/bootstrap）
 │   └── task1/             Task 1 R0 回归与校验（2 个 CSV + README）
 └── ideas/
     └── 埃博拉传播动力学模型_第一问.md

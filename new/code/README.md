@@ -1,4 +1,4 @@
-# new/code：P0/P1/P2 日尺度数据、建模、拟合与不确定性
+# new/code：P0/P1/P2/Q2 日尺度数据、建模、拟合与不确定性
 
 本目录是 Problem A 重建的新代码。旧代码在 `ws/old/code/matlab`，已冻结，不要修改。
 
@@ -27,6 +27,15 @@
 - `α0` profile 平坦；`ρRep` 自由估计 0.885；
 - 固定假设中 `E0` 影响最大；
 - AIC 选 2 节点反弹模型，3 节点未形成决定性改进。
+
+**Q2 日尺度对齐（第二问方法）已完成（2026-11-19）。**
+
+- Q2 日度观测表：142 天，fit 127 / holdout 15；
+- 6 参数、`βc+ρh+ρf`、对数 NLS、CFR 软约束、MultiStart 8；
+- 固定 `ρ_rep=1` 基线；自由 0.885 作敏感性；
+- profile `α0/ρ_rep/ρh0`、2/3 节点 + τ 网格；
+- 14/21 天块 bootstrap 500 次；
+- τ 网格显示 9/20 节点优于 10/11（AIC −1359.97，holdout 1.91%/0.79%）。
 
 ## 文件清单
 
@@ -58,6 +67,9 @@
 | `p2_model_compare.m` | 2 节点 vs 2 节点约束 vs 3 节点 |
 | `p2_opts_from_fit.m` | 从已拟合结构构造 P2 拟合选项 |
 | `p2_summary_table.m` | 参数/派生量统计汇总 |
+| `build_q2_daily_data.m` | Q2 日度观测表（C/M/Q/R/社区死亡/ETC 死亡/new_cases） |
+| `run_q2_aligned.m` | Q2 日尺度对齐：固定/自由 rhoRep、profile、节点/τ、14/21 天 bootstrap |
+| `run_q2_besttau.m` | Q2 第二节点 9/20 的完整拟合（固定/自由 rhoRep） |
 | `task1_checks.m` | legacy R0 回归、闭式 R0 vs 数值谱半径 |
 | `task1_state_diagram.py` | 生成 `ws/docs/SEIQRD_状态转移图.png` |
 
@@ -70,6 +82,8 @@ p0_check                 # 验收，并更新 ws/new/outputs/p0
 refresh_tracker_data     # 可选：重新抓取并生成新日期快照
 run_p1_fit               # P1 拟合，写 ws/new/outputs/p1
 run_p2_uncertainty       # P2 不确定性，写 ws/new/outputs/p2
+run_q2_aligned           # Q2 日尺度对齐，写 ws/new/outputs/q2
+run_q2_besttau           # Q2 第二节点 9/20 的最优 τ 拟合
 task1_checks             # Task 1 R0 回归，写 ws/new/outputs/task1
 python task1_state_diagram.py   # 生成状态转移图
 ```

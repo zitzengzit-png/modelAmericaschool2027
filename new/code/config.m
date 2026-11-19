@@ -23,6 +23,7 @@ cfg.legacyWorkbook  = fullfile(cfg.oldRoot, 'data', 'outbreak_data.xlsx');
 cfg.outDir          = fullfile(cfg.newRoot, 'outputs', 'p0');
 cfg.p1OutDir        = fullfile(cfg.newRoot, 'outputs', 'p1');
 cfg.p2OutDir        = fullfile(cfg.newRoot, 'outputs', 'p2');
+cfg.q2OutDir        = fullfile(cfg.newRoot, 'outputs', 'q2');
 cfg.task1OutDir     = fullfile(cfg.newRoot, 'outputs', 'task1');
 cfg.frozenSourceDir = fullfile(cfg.oldRoot, 'code', 'matlab'); % legacy, do not edit
 
@@ -103,6 +104,12 @@ cfg.p2.sensMaxFunEvals = 400;
 cfg.p2.sensMaxIter    = 300;
 cfg.p2.compareStarts  = 3;
 
+% Q2 daily-aligned second-question method.
+cfg.q2 = struct();
+cfg.q2.nBoot = 500;
+cfg.q2.blockLengths = [14 21];
+cfg.q2.seed = 20261119;
+
 % -------------------------------------------------------------------------
 % Overrides
 % -------------------------------------------------------------------------
@@ -133,6 +140,9 @@ if ~exist(cfg.p1OutDir, 'dir')
 end
 if ~exist(cfg.p2OutDir, 'dir')
     mkdir(cfg.p2OutDir);
+end
+if ~exist(cfg.q2OutDir, 'dir')
+    mkdir(cfg.q2OutDir);
 end
 if ~exist(cfg.task1OutDir, 'dir')
     mkdir(cfg.task1OutDir);

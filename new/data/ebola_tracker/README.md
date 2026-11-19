@@ -41,7 +41,14 @@
 - `province_latest_20261111.csv`：8 省，截至 2026-11-09；
 - `health_zone_latest_20261111.csv`：67 区，截至 2026-11-09；
 - `response_latest_20261111.csv`：页面六项指标，截至 2026-11-11；
-- `snapshot_metadata_20261111.json`：构建元数据与最新日行。
+- `snapshot_metadata_20261111.json`：构建元数据与最新日行；
+- `q2_daily_observations_20261111.csv`：**Q2 日度观测表**（C/M/Q/R/社区死亡/
+  ETC 死亡/new_cases，`phase=fit/holdout`），由 `build_q2_daily_data.m` 生成；
+- `q2_weekly_validation_20261111.csv`：Q2 周度累计锚点，仅校验，不作拟合目标。
+
+> Q2 日度观测表是**派生表**，不替代原始 `national_daily`；所有累计值来自原始
+> 累计序列，`new_*_adj` 只做周诊断，不用来还原累计值。
+> 本目录**没有**省际流动/OD/交通/迁移数据；Task 4 的流动矩阵必须构造情景代理。
 
 共享输入（最新可用，复制到本目录）：
 
