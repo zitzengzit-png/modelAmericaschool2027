@@ -37,6 +37,13 @@
 - 14/21 天块 bootstrap 500 次；
 - τ 网格显示 9/20 节点优于 10/11（AIC −1359.97，holdout 1.91%/0.79%）。
 
+**Q4 空间骨架与可视化（2026-11-19）。**
+
+- 8 省 SEIQRD、引力 P、Q2 9/20 参数；
+- 高负担省 beta_mult 标定；R_net/R_local；策略；跨境分支；
+- 输出 `ws/new/outputs/q4/`；
+- 留出期 MAE 仍差，当前为条件骨架。
+
 ## 文件清单
 
 | 文件 | 作用 |
@@ -70,6 +77,14 @@
 | `build_q2_daily_data.m` | Q2 日度观测表（C/M/Q/R/社区死亡/ETC 死亡/new_cases） |
 | `run_q2_aligned.m` | Q2 日尺度对齐：固定/自由 rhoRep、profile、节点/τ、14/21 天 bootstrap |
 | `run_q2_besttau.m` | Q2 第二节点 9/20 的完整拟合（固定/自由 rhoRep） |
+| `q4_load_data.m` | Q4 8 省数据、邻接/距离、引力 P、Q2 参数 |
+| `q4_initial_state.m` | Q4 省级初值（修正 D0=2×日死亡） |
+| `q4_simulate.m` | 8 省 SEIQRD 元群 ODE |
+| `q4_calibrate.m` | 高负担省 beta_mult 标定（10/18+10/25） |
+| `q4_rnet.m` | R_net/R_local 下一代矩阵 |
+| `q4_strategies.m` | 旅行限制/区域协同/环形接种/组合 |
+| `q4_border_risk.m` | 肯尼亚/尼日利亚负二项输入风险 |
+| `run_q4_spatial.m` | Q4 主脚本：标定、留出、策略、跨境、图 |
 | `task1_checks.m` | legacy R0 回归、闭式 R0 vs 数值谱半径 |
 | `task1_state_diagram.py` | 生成 `ws/docs/SEIQRD_状态转移图.png` |
 
@@ -84,6 +99,7 @@ run_p1_fit               # P1 拟合，写 ws/new/outputs/p1
 run_p2_uncertainty       # P2 不确定性，写 ws/new/outputs/p2
 run_q2_aligned           # Q2 日尺度对齐，写 ws/new/outputs/q2
 run_q2_besttau           # Q2 第二节点 9/20 的最优 τ 拟合
+run_q4_spatial           # Q4 8 省空间模型，写 ws/new/outputs/q4
 task1_checks             # Task 1 R0 回归，写 ws/new/outputs/task1
 python task1_state_diagram.py   # 生成状态转移图
 ```

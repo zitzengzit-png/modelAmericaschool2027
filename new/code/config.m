@@ -24,6 +24,7 @@ cfg.outDir          = fullfile(cfg.newRoot, 'outputs', 'p0');
 cfg.p1OutDir        = fullfile(cfg.newRoot, 'outputs', 'p1');
 cfg.p2OutDir        = fullfile(cfg.newRoot, 'outputs', 'p2');
 cfg.q2OutDir        = fullfile(cfg.newRoot, 'outputs', 'q2');
+cfg.q4OutDir        = fullfile(cfg.newRoot, 'outputs', 'q4');
 cfg.task1OutDir     = fullfile(cfg.newRoot, 'outputs', 'task1');
 cfg.frozenSourceDir = fullfile(cfg.oldRoot, 'code', 'matlab'); % legacy, do not edit
 
@@ -143,6 +144,9 @@ if ~exist(cfg.p2OutDir, 'dir')
 end
 if ~exist(cfg.q2OutDir, 'dir')
     mkdir(cfg.q2OutDir);
+end
+if ~exist(cfg.q4OutDir, 'dir')
+    mkdir(cfg.q4OutDir);
 end
 if ~exist(cfg.task1OutDir, 'dir')
     mkdir(cfg.task1OutDir);

@@ -1,0 +1,376 @@
+{
+  "generated_utc": "2026-11-19T11:25:51Z",
+  "provinces": [
+    "Ituri",
+    "Nord-Kivu",
+    "Haut-Uele",
+    "Tshopo",
+    "Bas-Uele",
+    "Nord-Ubangi",
+    "Sud-Kivu",
+    "Sud-Ubangi"
+  ],
+  "mShare": 0.015,
+  "Rnet": 2.3051903516678922,
+  "Rlocal": [
+    {
+      "province": "Ituri",
+      "R_local": 1.2063850010021677
+    },
+    {
+      "province": "Nord-Kivu",
+      "R_local": 1.5604483774802429
+    },
+    {
+      "province": "Haut-Uele",
+      "R_local": 2.3051613239614941
+    },
+    {
+      "province": "Tshopo",
+      "R_local": 1.8234952326707863
+    },
+    {
+      "province": "Bas-Uele",
+      "R_local": 1.0299764212245996
+    },
+    {
+      "province": "Nord-Ubangi",
+      "R_local": 1.029977996977514
+    },
+    {
+      "province": "Sud-Kivu",
+      "R_local": 1.0299710219402731
+    },
+    {
+      "province": "Sud-Ubangi",
+      "R_local": 1.0299779980457611
+    }
+  ],
+  "betaMult": [
+    {
+      "province": "Ituri",
+      "beta_mult": 1.1729435755624837
+    },
+    {
+      "province": "Nord-Kivu",
+      "beta_mult": 1.5156539053466065
+    },
+    {
+      "province": "Haut-Uele",
+      "beta_mult": 2.2388973419629825
+    },
+    {
+      "province": "Tshopo",
+      "beta_mult": 1.7704959941461735
+    },
+    {
+      "province": "Bas-Uele",
+      "beta_mult": 1
+    },
+    {
+      "province": "Nord-Ubangi",
+      "beta_mult": 1
+    },
+    {
+      "province": "Sud-Kivu",
+      "beta_mult": 1
+    },
+    {
+      "province": "Sud-Ubangi",
+      "beta_mult": 1
+    }
+  ],
+  "mae_holdout_model": 179.06377040100378,
+  "mae_holdout_flat": 18.035714285714292,
+  "calibration_cost": 0.1372965853584068,
+  "calibration_C10_obs": [
+    7211,
+    2309,
+    436,
+    83,
+    13,
+    3,
+    3,
+    2
+  ],
+  "calibration_C10_model": [
+    7420.8683587192736,
+    2310.116998521019,
+    447.74338087668264,
+    83.183955170353656,
+    1.1278917620327555,
+    0.00053826890013441335,
+    32.188446016884953,
+    2.3165851470240591E-6
+  ],
+  "strategies": [
+    {
+      "scenario": "baseline",
+      "cases15": 987.38940343968341,
+      "deaths15": 296.92008504872081,
+      "Rnet": 2.3056745689010674,
+      "maxQ": 220.44362481658479,
+      "maxI": 129.0246922596329,
+      "notes": "no intervention"
+    },
+    {
+      "scenario": "travel_0.5",
+      "cases15": 985.52734046665216,
+      "deaths15": 296.65782097441621,
+      "Rnet": 2.30565317836379,
+      "maxQ": 220.38618033844929,
+      "maxI": 128.83643205976156,
+      "notes": "off-diagonal P x (1-theta)"
+    },
+    {
+      "scenario": "travel_0.9",
+      "cases15": 984.03976111115492,
+      "deaths15": 296.44821574728178,
+      "Rnet": 2.3056465322512607,
+      "maxQ": 220.34032100907106,
+      "maxI": 128.68625731455222,
+      "notes": "off-diagonal P x (1-theta)"
+    },
+    {
+      "scenario": "coordination",
+      "cases15": 909.95783273586119,
+      "deaths15": 286.073740283519,
+      "Rnet": 1.9315324297735104,
+      "maxQ": 217.59083805936612,
+      "maxI": 116.06469337298813,
+      "notes": "beta_mult x0.85, alpha x1.10"
+    },
+    {
+      "scenario": "ring_vaccine",
+      "cases15": 734.17566163343122,
+      "deaths15": 260.46087580598004,
+      "Rnet": 1.0351817675646264,
+      "maxQ": 185.84662664271468,
+      "maxI": 115.40751226013856,
+      "notes": "target C10>=50, efficacy 0.7 x coverage 0.8"
+    },
+    {
+      "scenario": "combination",
+      "cases15": 704.53619891483856,
+      "deaths15": 256.09155082208787,
+      "Rnet": 0.864901864212938,
+      "maxQ": 187.67058638465048,
+      "maxI": 109.90155161439111,
+      "notes": "travel 50% + coordination + ring"
+    }
+  ],
+  "border": [
+    {
+      "nSeeds": 9,
+      "m": 0.8,
+      "k": 0.5,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 0.8,
+      "k": 1,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 0.8,
+      "k": null,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 1,
+      "k": 0.5,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 1,
+      "k": 1,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 1,
+      "k": null,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.05,
+      "k": 0.5,
+      "q_extinct": 0.96808141506420486,
+      "p_nonextinct": 0.253195468123542
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.05,
+      "k": 1,
+      "q_extinct": 0.95238095236141218,
+      "p_nonextinct": 0.35539108390123286
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.05,
+      "k": null,
+      "q_extinct": 0.90629816290790222,
+      "p_nonextinct": 0.58748485574239406
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.2,
+      "k": 0.5,
+      "q_extinct": 0.88661752483249723,
+      "p_nonextinct": 0.66144689471527041
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.2,
+      "k": 1,
+      "q_extinct": 0.833333333328427,
+      "p_nonextinct": 0.80619330054245475
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.2,
+      "k": null,
+      "q_extinct": 0.68630166895487532,
+      "p_nonextinct": 0.96622187837567353
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.5,
+      "k": 0.5,
+      "q_extinct": 0.76759187924189254,
+      "p_nonextinct": 0.90749326708718692
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.5,
+      "k": 1,
+      "q_extinct": 0.666666666664876,
+      "p_nonextinct": 0.97398770512687993
+    },
+    {
+      "nSeeds": 9,
+      "m": 1.5,
+      "k": null,
+      "q_extinct": 0.41718835613278016,
+      "p_nonextinct": 0.99961718441736225
+    },
+    {
+      "nSeeds": 1,
+      "m": 0.8,
+      "k": 0.5,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 0.8,
+      "k": 1,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 0.8,
+      "k": null,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 1,
+      "k": 0.5,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 1,
+      "k": 1,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 1,
+      "k": null,
+      "q_extinct": 1,
+      "p_nonextinct": 0
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.05,
+      "k": 0.5,
+      "q_extinct": 0.96808141506420486,
+      "p_nonextinct": 0.031918584935795136
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.05,
+      "k": 1,
+      "q_extinct": 0.95238095236141218,
+      "p_nonextinct": 0.047619047638587819
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.05,
+      "k": null,
+      "q_extinct": 0.90629816290790222,
+      "p_nonextinct": 0.093701837092097784
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.2,
+      "k": 0.5,
+      "q_extinct": 0.88661752483249723,
+      "p_nonextinct": 0.11338247516750277
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.2,
+      "k": 1,
+      "q_extinct": 0.833333333328427,
+      "p_nonextinct": 0.16666666667157304
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.2,
+      "k": null,
+      "q_extinct": 0.68630166895487532,
+      "p_nonextinct": 0.31369833104512468
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.5,
+      "k": 0.5,
+      "q_extinct": 0.76759187924189254,
+      "p_nonextinct": 0.23240812075810746
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.5,
+      "k": 1,
+      "q_extinct": 0.666666666664876,
+      "p_nonextinct": 0.33333333333512405
+    },
+    {
+      "nSeeds": 1,
+      "m": 1.5,
+      "k": null,
+      "q_extinct": 0.41718835613278016,
+      "p_nonextinct": 0.58281164386721984
+    }
+  ],
+  "notes": "P is a gravity stay-share proxy, not observed OD; beta_mult absorbs reporting/behaviour; rho_rep=1 approximation.",
+  "warning": "Holdout MAE is worse than the flat baseline; R_net is conditional and must not be used as a final prediction. Low-burden provinces are fixed at beta_mult=1."
+}
