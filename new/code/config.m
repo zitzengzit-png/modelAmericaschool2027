@@ -22,6 +22,8 @@ cfg.trackerDir      = fullfile(cfg.dataDir, 'ebola_tracker');
 cfg.legacyWorkbook  = fullfile(cfg.oldRoot, 'data', 'outbreak_data.xlsx');
 cfg.outDir          = fullfile(cfg.newRoot, 'outputs', 'p0');
 cfg.p1OutDir        = fullfile(cfg.newRoot, 'outputs', 'p1');
+cfg.p2OutDir        = fullfile(cfg.newRoot, 'outputs', 'p2');
+cfg.task1OutDir     = fullfile(cfg.newRoot, 'outputs', 'task1');
 cfg.frozenSourceDir = fullfile(cfg.oldRoot, 'code', 'matlab'); % legacy, do not edit
 
 % Data source and time standard (day).
@@ -82,6 +84,25 @@ cfg.fitWeights = struct('mu', 1.0, 'weekly', 0.3, 'cfr', 5.0, ...
 % Output naming.
 cfg.outTag = 'v2';
 
+% P2 uncertainty settings (block bootstrap / profile / sensitivity).
+cfg.p2 = struct();
+cfg.p2.nBoot          = 100;          % replicates per block length
+cfg.p2.blockLengths   = [7 14];       % days
+cfg.p2.seed           = 20261111;
+cfg.p2.maxCostFactor  = 3.0;          % reject a replicate above this cost
+cfg.p2.profileN       = 9;            % grid points for alpha0/u1 profiles
+cfg.p2.rhoRepGrid     = 0.50:0.05:1.00;
+cfg.p2.bootStarts     = 1;
+cfg.p2.bootMaxFunEvals = 300;
+cfg.p2.bootMaxIter    = 250;
+cfg.p2.profileStarts  = 2;
+cfg.p2.profileMaxFunEvals = 300;
+cfg.p2.profileMaxIter = 250;
+cfg.p2.sensStarts     = 1;
+cfg.p2.sensMaxFunEvals = 400;
+cfg.p2.sensMaxIter    = 300;
+cfg.p2.compareStarts  = 3;
+
 % -------------------------------------------------------------------------
 % Overrides
 % -------------------------------------------------------------------------
@@ -109,6 +130,12 @@ if ~exist(cfg.outDir, 'dir')
 end
 if ~exist(cfg.p1OutDir, 'dir')
     mkdir(cfg.p1OutDir);
+end
+if ~exist(cfg.p2OutDir, 'dir')
+    mkdir(cfg.p2OutDir);
+end
+if ~exist(cfg.task1OutDir, 'dir')
+    mkdir(cfg.task1OutDir);
 end
 end
 

@@ -1,0 +1,7 @@
+check,status,detail
+legacy_R0_output,PASS,"formula 1.355789887/0.884312117 vs CSV 1.355789887/0.884312117"
+legacy_R0_spectral,PASS,"spectral 1.355789887/0.884312117 vs formula 1.355789887/0.884312117"
+new_R0_spectral_early,PASS,"spectral 1.341443500 vs formula 1.341443500"
+new_R0_spectral_late,PASS,"spectral 1.142720773 vs formula 1.142720773"
+three_channels_nonnegative,PASS,"Rc 0.3314, Rh 0.6178, Rf 0.3922"
+daily_rate_units,PASS,"betaC0, alpha0 and mu are day^-1"

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-11T14:07:42",
+  "generated_utc": "2026-11-19T08:00:27",
   "config": {
     "wsRoot": "D:\\MATHmodelAmericaschool2027\\ws",
     "oldRoot": "D:\\MATHmodelAmericaschool2027\\ws\\old",
@@ -10,6 +10,8 @@
     "legacyWorkbook": "D:\\MATHmodelAmericaschool2027\\ws\\old\\data\\outbreak_data.xlsx",
     "outDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p0",
     "p1OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p1",
+    "p2OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p2",
+    "task1OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\task1",
     "frozenSourceDir": "D:\\MATHmodelAmericaschool2027\\ws\\old\\code\\matlab",
     "dataSource": "tracker",
     "timeUnit": "day",
@@ -86,7 +88,40 @@
       "muPrior": 0.3,
       "rho": 0.3
     },
-    "outTag": "v2"
+    "outTag": "v2",
+    "p2": {
+      "nBoot": 100,
+      "blockLengths": [
+        7,
+        14
+      ],
+      "seed": 2.0261111E+7,
+      "maxCostFactor": 3,
+      "profileN": 9,
+      "rhoRepGrid": [
+        0.5,
+        0.55,
+        0.6,
+        0.65,
+        0.7,
+        0.75,
+        0.8,
+        0.85,
+        0.9,
+        0.95,
+        1
+      ],
+      "bootStarts": 1,
+      "bootMaxFunEvals": 300,
+      "bootMaxIter": 250,
+      "profileStarts": 2,
+      "profileMaxFunEvals": 300,
+      "profileMaxIter": 250,
+      "sensStarts": 1,
+      "sensMaxFunEvals": 400,
+      "sensMaxIter": 300,
+      "compareStarts": 3
+    }
   },
   "data_source": "ebola-tracker.org daily series 2026-06-21..2026-11-09 (SitRep 179)",
   "time_unit": "day",

@@ -91,7 +91,7 @@ R0tab = table( ...
      "R0_late"; "Rc_late"; "Rh_late"; "Rf_late"; ...
      "betaC0"; "betaC_late"; "alpha0"; "mu"; "rhoRep"], ...
     [m.R0; m.Rc; m.Rh; m.Rf; m.R0late; m.RcLate; m.RhLate; m.RfLate; ...
-     p.betaC0; p.betaC0 * (1 - p.u1) * (1 - p.u2); ...
+     p.betaC0; m.betaCLate; ...
      p.alpha; p.mu; p.rhoRep], ...
     'VariableNames', {'item', 'value'});
 writetable(R0tab, fullfile(cfg.p1OutDir, 'P1_R0_channels.csv'));
@@ -104,7 +104,13 @@ out.y0 = fit.y0;
 out.cost = fit.cost;
 out.success = fit.success;
 out.rhoRepMode = fit.rhoRepMode;
+out.fixRhoRep = fit.rhoRepMode;
 out.allowRebound = fit.allowRebound;
+out.paramNames = fit.paramNames;
+out.freeNames = fit.freeNames;
+out.kAIC = m.kAIC;
+out.nAIC = m.nAIC;
+out.sseDaily = m.sseDaily;
 out.fit_start = string(cfg.fitStart, 'yyyy-MM-dd');
 out.fit_end = string(cfg.fitEnd, 'yyyy-MM-dd');
 out.hold_start = string(cfg.holdStart, 'yyyy-MM-dd');
@@ -130,7 +136,7 @@ plot(data.daily.date, data.daily.cases, 'ko', 'MarkerSize', 3, ...
     'DisplayName', 'Observed'); hold on;
 plot(data.daily.date, fit.Cpred, 'r-', 'LineWidth', 1.8, ...
     'DisplayName', 'Model');
-xline(cfg.fitEnd, 'k--', 'fit end');
+xline(cfg.fitEnd, 'k--', 'fit end', 'HandleVisibility', 'off');
 xlabel('Date'); ylabel('Cumulative confirmed cases');
 title('(a) Cumulative cases'); grid on; box off;
 legend('Location', 'northwest'); legend boxoff;
@@ -141,7 +147,7 @@ plot(data.daily.date, data.daily.deaths, 'ko', 'MarkerSize', 3, ...
     'DisplayName', 'Observed'); hold on;
 plot(data.daily.date, fit.Mpred, 'r-', 'LineWidth', 1.8, ...
     'DisplayName', 'Model');
-xline(cfg.fitEnd, 'k--', 'fit end');
+xline(cfg.fitEnd, 'k--', 'fit end', 'HandleVisibility', 'off');
 xlabel('Date'); ylabel('Cumulative deaths');
 title('(b) Cumulative deaths'); grid on; box off;
 legend('Location', 'northwest'); legend boxoff;
@@ -153,7 +159,7 @@ bar(Wk.weekEnd, weekNewObs, 0.6, 'FaceColor', [0.62 0.79 0.88], ...
 hold on;
 plot(Wk.weekEnd, weekNewPred, 'r-o', 'LineWidth', 1.5, ...
     'MarkerSize', 4, 'DisplayName', 'Model');
-xline(cfg.fitEnd, 'k--', 'fit end');
+xline(cfg.fitEnd, 'k--', 'fit end', 'HandleVisibility', 'off');
 xlabel('Date'); ylabel('Weekly new cases');
 title('(c) Weekly incidence'); grid on; box off;
 legend('Location', 'northeast'); legend boxoff;
@@ -163,9 +169,11 @@ nexttile;
 plot(data.daily.date, Reff, 'b-', 'LineWidth', 1.8, ...
     'DisplayName', 'R_{eff}');
 hold on; yline(1, 'k--', 'LineWidth', 1.0, 'DisplayName', 'R=1');
-xline(cfg.betaKnots(1), ':', 'knot 1', 'Color', [0.4 0.4 0.4]);
-xline(cfg.betaKnots(2), ':', 'knot 2', 'Color', [0.4 0.4 0.4]);
-xline(cfg.fitEnd, 'k--', 'fit end');
+xline(cfg.betaKnots(1), ':', 'knot 1', 'Color', [0.4 0.4 0.4], ...
+    'HandleVisibility', 'off');
+xline(cfg.betaKnots(2), ':', 'knot 2', 'Color', [0.4 0.4 0.4], ...
+    'HandleVisibility', 'off');
+xline(cfg.fitEnd, 'k--', 'fit end', 'HandleVisibility', 'off');
 xlabel('Date'); ylabel('R_{eff}(t)');
 title('(d) Effective reproduction number'); grid on; box off;
 legend('Location', 'northwest'); legend boxoff;
@@ -173,6 +181,13 @@ xtickformat('MM-dd');
 
 sgtitle('P1: daily three-route SEIQRD fit', ...
     'FontSize', 13, 'FontWeight', 'bold');
+axs = findall(fig, 'Type', 'axes');
+for k = 1:numel(axs)
+    try
+        axs(k).XAxis.SecondaryLabel.Visible = 'off';
+    catch
+    end
+end
 exportgraphics(fig, fullfile(cfg.p1OutDir, 'P1_fit.png'), ...
     'Resolution', 300);
 

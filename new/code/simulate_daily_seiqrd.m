@@ -9,7 +9,11 @@ function out = simulate_daily_seiqrd(p, t, y0, betaFun)
 %   C = I+Q+R+M, M = cumulative deaths.
 
 if nargin < 4 || isempty(betaFun)
-    betaFun = make_beta_fun(p.betaC0, p.u1, p.u2, p.knots);
+    if isfield(p, 'uVec') && numel(p.uVec) == numel(p.knots)
+        betaFun = make_beta_fun_multi(p.betaC0, p.uVec, p.knots);
+    else
+        betaFun = make_beta_fun(p.betaC0, p.u1, p.u2, p.knots);
+    end
 end
 
 t = t(:);
