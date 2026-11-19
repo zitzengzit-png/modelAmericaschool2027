@@ -41,7 +41,7 @@
 - `q2_daily_observations_20261111.csv`：142 天，fit 127 / holdout 15；
 - 6 参数、`βc+ρh+ρf`、对数 NLS、CFR 软约束、MultiStart 8；
 - 固定 `ρ_rep=1` 基线；自由 0.885 作敏感性；
-- profile `α0/ρ_rep/ρh0`、2/3 节点 + τ 网格、14/21 天块 bootstrap；
+- profile `α0/ρ_rep`；`ρh0` 三点敏感性、2/3 节点 + τ 网格、14/21 天块 bootstrap；
 - τ 网格显示 9/20 优于 10/11（AIC −1359.97，holdout 1.91%/0.79%）；
 - 结果：`ws/new/outputs/q2/`。
 
