@@ -1,0 +1,69 @@
+2026 CQU_MCM
+Problem A: Modeling Ebola Virus Disease Transmission and Control
+
+
+
+Ebola Virus Disease (EVD) is a highly fatal infectious disease caused by the Ebola virus, primarily transmitted through direct contact with the bodily fluids of infected or deceased individuals. Since its first identification in Zaire (now the Democratic Republic of the Congo) in 1976, Africa has experienced more than 25 Ebola outbreaks. The 2014–2016 West African outbreak was the largest in history, with over 28,000 reported cases and more than 11,000 deaths.[1]
+
+In May 2026, the Democratic Republic of the Congo (DRC) experienced another Ebola outbreak. As of October 25–26, 2026, the outbreak has persisted for approximately five months and has become the second-largest Ebola outbreak on record (second only to the 2014–2016 West African outbreak), as well as the largest and deadliest Ebola outbreak in DRC's history.[2]
+
+This outbreak is caused by the Bundibugyo virus, which differs from the commonly seen Zaire strain. Currently, there are no approved vaccines or specific treatments for the Bundibugyo virus. The World Health Organization declared the outbreak a Public Health Emergency of International Concern (PHEIC) in May 2026.[3]
+
+As of October 25–26, 2026, there have been approximately 10,060 cumulative confirmed cases; approximately 4,887 cumulative deaths; a crude case fatality rate of approximately 48.6%; the outbreak has spread to 8 provinces and 66 health zones, with Ituri, North Kivu, and Haut-Uele being the most affected provinces;[4] cross-border transmission has also occurred: Kenya has reported 9 confirmed cases; [5] Nigeria confirmed its first case on October 20 (with a history of travel to Uganda).[5]
+
+Numerous challenges remain, including: transmission chains are not effectively controlled, with over 80% of new cases detected outside known contacts; approximately two-thirds of deaths occur in the community, with the deceased not having received medical care in health facilities. Armed conflict persists in Ituri, North Kivu, and other areas, hindering outbreak response, and treatment centers have been attacked. Cross-border transmission risk exists, as the outbreak has spread to neighboring countries, with imported cases in Kenya and Nigeria. Funding is severely insufficient, with the joint WHO–Africa CDC response plan still facing a funding gap of over 400 million US dollars. There are no approved vaccines or specific drugs, as vaccine and treatment options for the Bundibugyo virus remain in clinical trials.
+
+Simultaneously, response progress includes: treatment beds have exceeded 800; laboratory capacity has expanded from 1 to 16; contact follow-up rates have increased to nearly 80%; more than 21,000 community health workers are being trained; safe and dignified burials have significantly improved; and multiple clinical trials have been launched, including the ChAdOx1 vaccine safety trial, MBP134 and remdesivir treatment trials, and the obeldesivir post-exposure prophylaxis trial.
+
+Requirements
+
+1. Continuous-Time Model: Develop a continuous-time transmission dynamics model, state the basic assumptions of the model, and explain the biological or epidemiological rationale for each assumption. Write the complete system of ordinary differential equations and explain the mechanism of each state transition and the meaning of each parameter. Consider person-to-person transmission, hospital transmission, and funeral transmission, and introduce time-varying parameters to describe how interventions change over time.
+
+2. Parameter Estimation and Model Fitting: Collect epidemic data and estimate key parameters in the model. Clearly state the data sources and preprocessing methods used, explain the parameter estimation methods employed, evaluate the goodness of fit of the model to the data, and discuss the sources of uncertainty in parameter estimation.
+
+3.Dynamic Impact of Interventions: Based on the model from Task 1, evaluate the impact of interventions on epidemic progression. Interventions include patient isolation, contact tracing, safe burials, hospital infection control, vaccination, MBP134/remdesivir treatment, obeldesivir post-exposure prophylaxis, and community health education. Specifically:
+
+Simulate the impact of each intervention implemented individually on cumulative cases, deaths, and outbreak duration.
+ Design multi-intervention combination schemes and compare the effectiveness of different combinations.
+Analyze the impact of intervention timing on epidemic outcomes: if interventions had been accelerated in mid-July (2,073 cases), how would the outcome differ compared to intervention at the current stage (10,060 cases)?
+ Specifically evaluate: how many resources are required to increase the contact follow-up rate from 78% to 90% or 95%, and how much transmission can be reduced?
+
+4.Spatial Transmission and Cross-Border Risk: The outbreak has spread from the initial epicenter to 8 provinces and 66 health zones, and imported cases have appeared in Kenya and Nigeria. Develop a spatial transmission model describing the spread of the epidemic between provinces and across borders. Consider:
+ Inter-provincial population mobility matrices
+ Travel restrictions and border controls
+ Regional coordinated prevention and control
+ Ring vaccination strategies
+
+Analyze the impact of different spatial strategies on epidemic spread. Assess the conditions under which the outbreak could evolve from a local outbreak into a large-scale epidemic. Evaluate whether the imported cases in Kenya (9 cases) and the first case in Nigeria could lead to sustained local transmission, and what measures should be taken.
+
+5. Sensitivity Analysis: Conduct a sensitivity analysis of the model to identify the parameters that have the greatest impact on the results. Discuss the sources of uncertainty in the model (data quality, parameter estimation, virus strain characteristics, armed conflict dynamics, community behavioral changes, etc.). Evaluate the robustness of the model under different scenarios, discuss the limitations of the model, and identify the issues that policymakers should consider when relying on the model analysis.
+
+6. Policy Recommendations and Executive Summary: Based on your model analysis, write an executive summary for the Ministry of Health of the Democratic Republic of the Congo and international donors, including a brief background of the current outbreak, your core findings, the most urgent action recommendations, resource needs and funding gaps, and why "this is not charity, but an investment in national security."
+
+Submission Requirements
+
+Your PDF solution of no more than 25 total pages should include:
+
+1. One-page Summary Sheet
+2. Table of Contents
+3. Your complete solution
+4. Executive Summary (may be integrated into the complete solution)
+5. In-text Citations and Reference List
+6. AI Use Report (if used, does not count toward the 25-page limit)
+
+Glossary
+
+Ebola Virus Disease (EVD): A severe, often fatal illness in humans caused by the Ebola virus, transmitted through direct contact with bodily fluids.
+Bundibugyo virus: A species of Ebola virus first identified in Uganda in 2007, associated with case fatality rates of approximately 25–40%.
+Basic Reproduction Number (R0): The average number of secondary infections produced by one infected individual in a completely susceptible population.
+Effective Reproduction Number (R(t)): The average number of secondary infections produced by one infected individual at time t, accounting for existing immunity and interventions.
+Case Fatality Rate (CFR):  The proportion of confirmed cases that result in death.
+Post-Exposure Prophylaxis (PEP): Treatment administered after exposure to a pathogen to prevent disease onset.
+Ring Vaccination: A strategy of vaccinating close contacts and contacts-of-contacts of confirmed cases to create a protective ring around each case.
+
+References
+[1] https://reliefweb.int/report/democratic-republic-congo/2014-2016-ebola -outbreak-west-africa#1;
+[2] https://www.who.int/news-room/speeches/item/who-director-general -s-opening-remarks-at-the-media-briefing---12-august-2026#1;
+[3] https://www.who.int/emergencies/situations/ebola-outbreak---drc-2026#
+[4]https://ebola-tracker.org/en/data/?province=Ituri#ou
+[5]https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON622

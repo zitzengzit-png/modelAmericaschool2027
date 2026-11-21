@@ -1,4 +1,4 @@
-# new/code：P0/P1/P2/Q2 日尺度数据、建模、拟合与不确定性
+# new/code：P0/P1/P2/Q2/Task1/Task3/Task4 日尺度数据、建模、拟合与情景
 
 本目录是 Problem A 重建的新代码。旧代码在 `ws/old/code/matlab`，已冻结，不要修改。
 
@@ -37,12 +37,26 @@
 - 14/21 天块 bootstrap 500 次；
 - τ 网格显示 9/20 节点优于 10/11（AIC −1359.97，holdout 1.91%/0.79%）。
 
-**Q4 空间骨架与可视化（2026-11-19）。**
+**Q4 旧空间骨架（2026-11-19，legacy）。**
 
 - 8 省 SEIQRD、引力 P、Q2 9/20 参数；
 - 高负担省 beta_mult 标定；R_net/R_local；策略；跨境分支；
 - 输出 `ws/new/outputs/q4/`；
-- 留出期 MAE 仍差，当前为条件骨架。
+- 留出期 MAE 179.06、`R_net=2.31`，仅作条件骨架。
+
+**Task 3（八类干预）已实现（2026-11-21）。**
+
+- `task3_*` + `run_task3_interventions.m`；
+- 基线 Q2 9/20；14 情景 × 2 个启动时点（7/14、10/25）；365 天；
+- 输出 `ws/new/outputs/task3/`：情景表、逐日轨迹、资源表、检查、图；
+- B0 在 141 天为 10,855.6（观测 11,042，−1.69%）；5 项检查 PASS。
+
+**Task 4 交付版（正式流水线，2026-11-21）。**
+
+- `task4_*` 全部改为可调用函数，新增 `run_task4_delivery.m`；
+- 共享 Q2 9/20、`beta_mult=1`、8 省引力 `P`；
+- 输出 `ws/new/outputs/task4/`：`T4_main/strategies/sensitivity/holdout` + 日志；
+- 留出 MAE 77.16（持平基线 18.04），`R_net=1.035`。
 
 ## 文件清单
 
@@ -84,7 +98,24 @@
 | `q4_rnet.m` | R_net/R_local 下一代矩阵 |
 | `q4_strategies.m` | 旅行限制/区域协同/环形接种/组合 |
 | `q4_border_risk.m` | 肯尼亚/尼日利亚负二项输入风险 |
-| `run_q4_spatial.m` | Q4 主脚本：标定、留出、策略、跨境、图 |
+| `run_q4_spatial.m` | Q4 主脚本：标定、留出、策略、跨境、图（**旧口径，legacy**） |
+| `task3_params.m` | Task 3 基线（Q2 9/20）与八类干预参数、敏感性范围 |
+| `task3_scenarios.m` | Task 3 的 14 个主情景定义 |
+| `task3_controls.m` | 时变 `α/ν/μQ` 与 `φ_CT/φ_V/φ_PEP/φ_CE` 乘数 |
+| `task3_rhs.m` | Task 3 干预 ODE 右端 |
+| `task3_integrate.m` | 在 β 节点与干预跳变处分段积分 |
+| `task3_metrics.m` | 峰值、14 日结束判据、逐日轨迹 |
+| `run_task3_interventions.m` | Task 3 主脚本：14 情景 × 2 时点，写 `outputs/task3` |
+| `task4_common.m` | Task 4 交付版共享 setup：8 省人口、邻接、Haversine、引力 `P`、Q2 9/20 参数、6/21 锚定初值 |
+| `task4_integrate.m` | Task 4 分段积分（在 `t1/t2` 节点重启，逐日输出） |
+| `task4_initial_active.m` | Task 4 省初值 `I*/Q*` 准稳态分配 |
+| `task4_spatial_skeleton.m` | Task 4 主模型（函数）：返回 province table、`R_net`、留出 MAE |
+| `task4_strategies.m` | Task 4 8 情景策略对比（函数，返回表） |
+| `task4_sensitivity.m` | Task 4 流动性敏感性（函数，72 行；写 `outputs/task4/T4_sensitivity.csv`） |
+| `task4_holdout_table.m` | Task 4 模型筛选（函数，返回表 + MAE 结构） |
+| `task4_q2_uncertainty.m` | Task 4 在 Q2 参数不确定性下的 `R_net` 稳健性 |
+| `task4_border_screening.m` | Task 4 境外筛查与持续传播风险（负二项分支过程） |
+| `run_task4_delivery.m` | Task 4 正式流水线：主模型+策略+敏感性+留出+跨境，写 `outputs/task4` |
 | `task1_checks.m` | legacy R0 回归、闭式 R0 vs 数值谱半径 |
 | `task1_state_diagram.py` | 生成 `ws/docs/SEIQRD_状态转移图.png` |
 
@@ -99,10 +130,24 @@ run_p1_fit               # P1 拟合，写 ws/new/outputs/p1
 run_p2_uncertainty       # P2 不确定性，写 ws/new/outputs/p2
 run_q2_aligned           # Q2 日尺度对齐，写 ws/new/outputs/q2
 run_q2_besttau           # Q2 第二节点 9/20 的最优 τ 拟合
-run_q4_spatial           # Q4 8 省空间模型，写 ws/new/outputs/q4
+run_task3_interventions  # Task 3 八类干预，写 ws/new/outputs/task3
+run_task4_delivery       # Task 4 正式流水线，写 ws/new/outputs/task4
+run_q4_spatial           # Q4 旧空间模型（legacy），写 ws/new/outputs/q4
 task1_checks             # Task 1 R0 回归，写 ws/new/outputs/task1
 python task1_state_diagram.py   # 生成状态转移图
 ```
+
+Task 4 组件也可单独调用（均为函数）：
+
+```matlab
+main = task4_spatial_skeleton();
+T    = task4_strategies();
+S    = task4_sensitivity();   % 写 outputs/task4/T4_sensitivity.csv
+[H, mae] = task4_holdout_table();
+```
+
+> Task 3/4 的口径差异与结果边界见 `ws/new/outputs/task3/README.md`、
+> `ws/new/outputs/task4/README.md` 和 `ws/docs/PROJECT_OVERVIEW.md` §8/§13。
 
 ## 日尺度数据选择
 
@@ -246,19 +291,12 @@ t1 = 2026-08-17（疫苗 rollout），t2 = 2026-10-11（平台期）
 - `P1_R0_channels.csv`；
 - `P1_fit.png`（累计病例/死亡、周新增、Reff 四联图）。
 
-## P2 结果与下一步
+## 下一步
 
-P2 已完成（2026-11-19）：
+Task 3 与 Task 4 已完成（2026-11-21）：
 
-- 7/14 天块 bootstrap 各 100 个有效 replicate；
-- `α0`、`u1`、`ρRep` 的 profile likelihood；
-- `ρH0/ρF0/ν/E0/D0` 单因素敏感性；
-- 2 节点、2 节点 `u2≥0`、3 节点的 AIC/BIC 比较；
-- 结果在 `ws/new/outputs/p2/`，说明见该目录 `README.md`。
+- Task 3：`outputs/task3/`，14 情景 × 2 时点，`T3_checks.csv` 全 PASS；
+- Task 4：`outputs/task4/`，MAE 77.16、`R_net=1.035`，旧 `q4_*` 标为 legacy。
 
-核心结论：`u2` 与 `R0late` 不可稳定识别（区间几乎覆盖允许范围）；
-`α0` profile 平坦；`ρRep` 自由估计 0.885，基线固定 1 落在 profile 区间外；
-固定假设中 `E0` 影响最大；AIC 选 2 节点反弹模型，3 节点无决定性改进。
-
-下一步进入 **Task 3 干预措施**（8 类干预、疫情持续时间、7 月中旬 vs 当前
-时机反事实、78%→90%/95% 随访资源），再做 **Task 4 空间/跨境**。
+下一步进入 **Task 5 敏感性**（Morris → LHS/PRCC → Sobol + 结构/情景层，
+`ws/docs/第五问建模.md`），再做 **Task 6 成本/资金缺口/执行摘要**。

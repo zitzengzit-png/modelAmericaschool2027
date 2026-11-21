@@ -1,4 +1,12 @@
-# new/outputs/q4：8 省空间 SEIQRD（修正版）
+# new/outputs/q4：8 省空间 SEIQRD（修正版，**legacy 口径**）
+
+> **注意（2026-11-21）**：本目录来自旧流水线 `q4_*.m` / `run_q4_spatial.m`，
+> 其留出期 MAE 179.06、`R_net=2.31` **已被 Task 4 交付版取代**
+> （`task4_*.m`：MAE 77.16、`R_net=1.035`）。
+> 正文请用交付版；本目录仅作“beta_mult 标定路线”的对照。
+> 另：交付版 `task4_sensitivity.m` 现在写 `ws/new/outputs/task4/T4_sensitivity.csv`，
+> 不再写入本目录；本目录只保留旧 `q4_*` 的输出。
+> 两代口径差异见 `ws/docs/PROJECT_OVERVIEW.md` §8。
 
 由 `ws/new/code/run_q4_spatial.m` 生成（2026-11-19）。
 

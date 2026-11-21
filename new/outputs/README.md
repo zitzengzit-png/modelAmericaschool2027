@@ -1,5 +1,27 @@
 # new/outputs：新题输出（日尺度 P0/P1）
 
+## Task 3 八类干预输出（2026-11-21）
+
+`task3/` 由 `ws/new/code/run_task3_interventions.m` 生成，基线 Q2 9/20：
+
+- `T3_scenarios.csv`：28 行 = 14 情景 × 2 个启动时点（7/14、10/25）；
+- `T3_trajectories.csv`：逐日 `C/M/dailyNew/X`；
+- `T3_resource.csv`：随访 78/90/95% 的 `phiCT` 与相对人力；
+- `T3_checks.csv`：5 项检查 PASS（守恒、非负、累计单调、行数、11/09 锚点）；
+- `T3_figures/`：单因素、组合时机、避免病例；
+- B0 141 天 10,855.6（观测 11,042，−1.69%）；详细边界见 `task3/README.md`。
+
+## Task 4 交付版输出（2026-11-21）
+
+`task4/` 由 `ws/new/code/run_task4_delivery.m` 生成（共享 Q2 9/20、`beta_mult=1`）：
+
+- `T4_main.csv`：8 省 10/25 拟合、留出期、`R_local`；
+- `T4_strategies.csv`：8 个策略情景；
+- `T4_sensitivity.csv`：9 组流动性 × 8 情景 = 72 行；
+- `T4_holdout.csv`：共享 Q2 vs 常数/淡出倍数；
+- `T4_console.log`：含 Q2 不确定性与跨境筛查；
+- 留出 MAE 77.16（持平 18.04），`R_net=1.035`；详细边界见 `task4/README.md`。
+
 ## P0 日尺度输出（2026-11-11）
 
 `p0/` 由 `ws/new/code/p0_check.m` 生成，共 4 个文件：
@@ -102,7 +124,7 @@
 
 
 
-## Q4 空间输出（2026-11-19）
+## Q4 空间输出（2026-11-19，legacy）
 
 `q4/` 由 `ws/new/code/run_q4_spatial.m` 生成：
 
@@ -112,6 +134,10 @@
 - `R_net/R_local`、旅行限制/区域协同/环形接种/组合；
 - 肯尼亚/尼日利亚负二项输入风险；
 - 图在 `Q4_figures/`。
+
+> **已被 Task 4 交付版取代**：`task4_*.m`（9 个函数）用共享 Q2 参数、`beta_mult=1`，
+> 留出期按省 MAE **77.16**（本目录 179.06），`R_net=1.035`（本目录 2.31）。
+> 正文用交付版；本目录数字仅作对照。详见 `ws/docs/PROJECT_OVERVIEW.md` §8。
 
 当前结果边界：10/25 高负担省拟合较好，但留出期 MAE 179.06 vs 持平基线 18.04；
 `R_net=2.31` 是条件诊断，不是最终预测。低负担省固定 `beta_mult=1`，

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-19T08:00:27",
+  "generated_utc": "2026-11-21T06:56:07",
   "config": {
     "wsRoot": "D:\\MATHmodelAmericaschool2027\\ws",
     "oldRoot": "D:\\MATHmodelAmericaschool2027\\ws\\old",
@@ -11,7 +11,11 @@
     "outDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p0",
     "p1OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p1",
     "p2OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\p2",
+    "q2OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\q2",
+    "q4OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\q4",
     "task1OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\task1",
+    "task3OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\task3",
+    "task4OutDir": "D:\\MATHmodelAmericaschool2027\\ws\\new\\outputs\\task4",
     "frozenSourceDir": "D:\\MATHmodelAmericaschool2027\\ws\\old\\code\\matlab",
     "dataSource": "tracker",
     "timeUnit": "day",
@@ -121,6 +125,14 @@
       "sensMaxFunEvals": 400,
       "sensMaxIter": 300,
       "compareStarts": 3
+    },
+    "q2": {
+      "nBoot": 500,
+      "blockLengths": [
+        14,
+        21
+      ],
+      "seed": 2.0261119E+7
     }
   },
   "data_source": "ebola-tracker.org daily series 2026-06-21..2026-11-09 (SitRep 179)",

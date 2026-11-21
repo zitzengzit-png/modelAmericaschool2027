@@ -1,0 +1,25 @@
+{
+  "generated_utc": "2026-11-21T06:55:13Z",
+  "baseline": {
+    "betaC0": 0.112512897763716,
+    "u1": 0.489194309176865,
+    "u2": -0.499999999999215,
+    "alpha0": 0.169786629921235,
+    "mu": 0.0348823701373093
+  },
+  "starts": [
+    "2026-07-14",
+    "2026-10-25"
+  ],
+  "startCases": [
+    2073,
+    10060
+  ],
+  "nScenarios": 14,
+  "baseline_C_end": 27816.289443905105,
+  "baseline_M_end": 14373.175992856366,
+  "baseline_peak": 107.84084223748869,
+  "baseline_peakDay": 57,
+  "baseline_T_end": null,
+  "notes": "Interventions are scenario multipliers, not estimated causal effects. Baseline is the Q2 9/20 fit with u2=-0.5, i.e. a late rebound extrapolated to day 365."
+}

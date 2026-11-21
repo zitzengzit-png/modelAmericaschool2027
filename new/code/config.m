@@ -26,6 +26,8 @@ cfg.p2OutDir        = fullfile(cfg.newRoot, 'outputs', 'p2');
 cfg.q2OutDir        = fullfile(cfg.newRoot, 'outputs', 'q2');
 cfg.q4OutDir        = fullfile(cfg.newRoot, 'outputs', 'q4');
 cfg.task1OutDir     = fullfile(cfg.newRoot, 'outputs', 'task1');
+cfg.task3OutDir     = fullfile(cfg.newRoot, 'outputs', 'task3');
+cfg.task4OutDir     = fullfile(cfg.newRoot, 'outputs', 'task4');
 cfg.frozenSourceDir = fullfile(cfg.oldRoot, 'code', 'matlab'); % legacy, do not edit
 
 % Data source and time standard (day).
@@ -150,6 +152,12 @@ if ~exist(cfg.q4OutDir, 'dir')
 end
 if ~exist(cfg.task1OutDir, 'dir')
     mkdir(cfg.task1OutDir);
+end
+if ~exist(cfg.task3OutDir, 'dir')
+    mkdir(cfg.task3OutDir);
+end
+if ~exist(cfg.task4OutDir, 'dir')
+    mkdir(cfg.task4OutDir);
 end
 end
 

@@ -1,0 +1,6 @@
+check,status,detail
+conservation,PASS,max |S+E+I+Q+R+M-N| = 3.13e-07
+nonnegative,PASS,min state = 0
+cumulative_monotone,PASS,all C series nondecreasing: 1
+scenario_rows,PASS,rows = 28 (14 scenarios x 2 starts)
+baseline_anchor_1109,INFO,B0 C(141)=10855.6 vs observed 11042 (-1.69%)

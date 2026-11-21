@@ -1,0 +1,92 @@
+=== Task 4 delivery pipeline ===
+Window: 2026-06-21 to 2026-11-09; shared Q2 9/20 parameters.
+R0 = 1.344  (community 36%, hospital 37%, funeral 27%)
+=== Cumulative cases @ 10/25 (model, onset caliber) ===
+  1. Ituri        6879
+  2. Nord-Kivu    579
+  3. Haut-Uele    30
+  4. Tshopo       16
+  5. Sud-Kivu     10
+  6. Bas-Uele     0
+  7. Nord-Ubangi  0
+  8. Sud-Ubangi   0
+
+=== Holdout net increase (10/26-11/9) ===
+province            obs  flat-base      model
+Ituri               473     537.86      648.7
+Nord-Kivu           428     482.14       59.7
+Haut-Uele            60      45.00        6.1
+Tshopo               15      21.43        3.3
+Bas-Uele              0       0.00        0.0
+Nord-Ubangi           6       2.14        0.0
+Sud-Kivu              0       0.00        1.6
+Sud-Ubangi            0       0.00        0.0
+
+Comparable provinces: 8 of 8
+
+MAE: model = 77.16 | flat baseline = 18.04
+
+R_net (late phase) = 1.035
+R_local: 1.03 1.03 1.03 1.03 1.03 1.03 1.03 1.03 
+
+R_net = 1.0354; holdout MAE = 77.16 (flat 18.04)
+Window: 2026-06-21 to 2026-11-09. Scenario changes active from day 0.
+Initial model totals: 1048 onsets, 267 deaths.
+scenario                            onsets@11/9  deaths@11/9  onset delta  death delta   R_net@11/9 onset change
+shared Q2 reference                        8234         4004         7186         3737        1.035        +0.0%
+travel 50%                                 8162         3972         7114         3705        1.033        -1.0%
+travel 90%                                 8106         3947         7058         3680        1.030        -1.8%
+coord.: beta -15%, alpha +20%              5014         2530         3966         2263        0.856       -44.8%
+regional reduction proxy 30%               3664         1881         2616         1614        1.035       -63.6%
+regional reduction proxy 50%               2457         1278         1409         1011        1.035       -80.4%
+ring mechanism eps=0.5                     6642         3423         5594         3156        1.035       -22.2%
+combined (30% proxy)                       2834         1469         1786         1202        0.854       -75.1%
+shared Q2 reference: change 0.00 to 0.00 percent; Rnet 1.0317 to 1.0409
+travel 50%: change -1.99 to -0.33 percent; Rnet 1.0308 to 1.0354
+travel 90%: change -3.54 to -0.60 percent; Rnet 1.0301 to 1.0310
+coord.: beta -15%, alpha +20%: change -45.18 to -44.57 percent; Rnet 0.8531 to 0.8599
+regional reduction proxy 30%: change -63.75 to -63.49 percent; Rnet 1.0317 to 1.0406
+regional reduction proxy 50%: change -80.53 to -80.29 percent; Rnet 1.0317 to 1.0406
+ring mechanism eps=0.5: change -22.20 to -22.12 percent; Rnet 1.0317 to 1.0406
+combined (30% proxy): change -75.52 to -74.89 percent; Rnet 0.8524 to 0.8557
+
+=== Holdout net increase 10/26-11/9 (per province) ===
+province            obs  flat-base   sharedQ2   const-mult    fade-mult
+Ituri               473     537.86      648.7       1121.4       2060.7
+Nord-Kivu           428     482.14       59.7        198.7        107.8
+Haut-Uele            60      45.00        6.1        635.2         54.5
+Tshopo               15      21.43        3.3         49.1         17.5
+Bas-Uele              0       0.00        0.0          4.6          0.4
+Nord-Ubangi           6       2.14        0.0          0.0          0.0
+Sud-Kivu              0       0.00        1.6          1.6          2.1
+Sud-Ubangi            0       0.00        0.0          0.0          0.0
+
+MAE                          18.04      77.16       187.40       240.55
+
+Calibrated beta_mult:
+  constant: 1.09 1.21 2.30 1.71 2.00 1.01 0.50 1.00 
+  fading:   1.43 1.12 2.50 1.92 2.00 1.00 0.50 1.00 
+
+MAE summary: flat 18.04 | shared 77.16 | const 187.40 | fade 240.55
+
+Task 4 structured outputs written to D:\MATHmodelAmericaschool2027\ws\new\outputs\task4
+R_net across rhoH/rhoF ranges (frozen params, S/N~1):
+scenario                R_net min  R_net max
+baseline                   0.9264     1.2085
+travel 90%                 0.9214     1.2036
+coordination               0.7555     1.0033
+ring 50%                   0.9261     1.2083
+combination                0.7570     1.0048
+
+Conclusion robust if coordination max < 1 and travel/ring min > 1.
+m = 1.20
+screen(cs*eta)  n_eff(KE) |  Kenya n=9 P(sust) | Nigeria n=1 P(sust)
+0.0                 9.0 |   66.1%  80.6%  96.6% |   11.3%  16.7%  31.4%
+0.3                 6.3 |   53.1%  68.3%  90.7% |    8.1%  12.0%  23.2%
+0.5                 4.5 |   41.8%  56.0%  81.6% |    5.8%   8.7%  17.2%
+0.7                 2.7 |   27.7%  38.9%  63.8% |    3.5%   5.3%  10.7%
+0.9                 0.9 |   10.3%  15.1%  28.7% |    1.2%   1.8%   3.7%
+
+columns within each block: k=0.5, k=1, k=Inf (Poisson)
+Kenya n=9 uses 9*(1-cs*eta) effective seeds; Nigeria n=1 uses (1-cs*eta).
+Screening target: bring Kenya P(sust) below ~10%.
